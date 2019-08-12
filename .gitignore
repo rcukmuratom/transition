@@ -28,3 +28,4 @@
 
 # Ignore spec/examples.txt for re-running
 /spec/examples.txt
+.env
