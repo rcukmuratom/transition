@@ -5,8 +5,8 @@ module Transition
   module Import
     module Whitehall
       class Mappings
-        WHITEHALL_URL = "#{Plek.current.find('whitehall-admin')}/government/mappings.csv"
-        AS_USER_EMAIL = 'whitehall-urls-robot@dummy.com'
+        WHITEHALL_URL = "#{Plek.current.find('whitehall-admin')}/government/mappings.csv".freeze
+        AS_USER_EMAIL = 'whitehall-urls-robot@dummy.com'.freeze
 
         def initialize(options = {})
           @filename = options[:filename]
@@ -20,17 +20,18 @@ module Transition
 
         def call
           if @filename
-            filename = @filename
+            process(@filename)
           else
             filename = download
+            process(filename, delete_after: true)
           end
-          process(filename)
         end
 
       private
+
         def as_user
           User.where(email: AS_USER_EMAIL).first_or_create! do |user|
-            user.name  = 'Whitehall URL Robot'
+            user.name = 'Whitehall URL Robot'
             user.is_robot = true
           end
         end
@@ -50,12 +51,14 @@ module Transition
           filename
         end
 
-        def process(filename)
+        def process(filename, delete_after: false)
           Rails.logger.info('Processing...')
 
           File.open(filename, 'r') { |file|
             Transition::Import::Whitehall::MappingsCSV.new(as_user).from_csv(file)
           }
+
+          FileUtils.rm(filename) if delete_after
         end
       end
     end

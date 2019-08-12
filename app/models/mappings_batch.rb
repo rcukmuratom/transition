@@ -1,8 +1,8 @@
 class MappingsBatch < ActiveRecord::Base
   self.inheritance_column = :klass
 
-  FINISHED_STATES = ['succeeded', 'failed']
-  PROCESSING_STATES = ['unqueued', 'queued', 'processing'] + FINISHED_STATES
+  FINISHED_STATES = %w(succeeded failed).freeze
+  PROCESSING_STATES = %w(unqueued queued processing) + FINISHED_STATES
 
   attr_accessor :paths # a virtual attribute to then use for creating entries
 
@@ -12,7 +12,7 @@ class MappingsBatch < ActiveRecord::Base
 
   validates :user, presence: true
   validates :site, presence: true
-  validates :state, inclusion: { :in => PROCESSING_STATES }
+  validates :state, inclusion: { in: PROCESSING_STATES }
 
   scope :reportable, -> { where(seen_outcome: false).where("state != 'unqueued'") }
 
@@ -42,6 +42,7 @@ class MappingsBatch < ActiveRecord::Base
         mapping = site.mappings.where(path: entry.path).first_or_initialize
 
         next if !update_existing && mapping.persisted?
+
         mapping.path = entry.path
         mapping.type = entry.type
         mapping.new_url = entry.new_url
@@ -58,7 +59,7 @@ class MappingsBatch < ActiveRecord::Base
     update_column(:state, 'processing')
     yield
     update_column(:state, 'succeeded')
-  rescue => e
+  rescue StandardError
     update_column(:state, 'failed')
     raise
   end

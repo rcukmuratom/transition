@@ -1,6 +1,6 @@
 class AuthenticationController < ApplicationController
   # we don't need to authenticate these requests, they create the authentication
-  skip_before_filter :authenticate
+  skip_before_action :authenticate
 
   def index
   end

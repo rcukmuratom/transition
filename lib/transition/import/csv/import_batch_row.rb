@@ -18,19 +18,18 @@ module Transition
         end
 
         def data_row?
-          @old_value.starts_with?('/') || Transition::PathOrURL.starts_with_http_scheme?(@old_value)
+          @old_value.starts_with?('/') || ::Transition::PathOrUrl.starts_with_http_scheme?(@old_value)
         end
 
         def type
-          @_type ||= case
-                     when new_value && ((new_value.upcase == 'TNA') || new_url_is_a_national_archives_url?) then 'archive'
-                     when new_value then 'redirect'
-                     else 'unresolved'
-                     end
+          @type ||= if new_value && ((new_value.upcase == 'TNA') || new_url_is_a_national_archives_url?) then 'archive'
+                    elsif new_value then 'redirect'
+                    else 'unresolved'
+                    end
         end
 
         def path
-          @_path ||= @site.canonical_path(old_value)
+          @path ||= @site.canonical_path(old_value)
         end
 
         def homepage?
@@ -86,10 +85,11 @@ module Transition
         end
 
       private
+
         def new_url_is_a_national_archives_url?
           host = Addressable::URI.parse(new_value).host
           host == NationalArchivesURLValidator::NATIONAL_ARCHIVES_HOST
-        rescue Addressable::URI::InvalidURIError => e
+        rescue Addressable::URI::InvalidURIError
           false
         end
       end

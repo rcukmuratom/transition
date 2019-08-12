@@ -84,6 +84,22 @@ describe Host do
       subject { site.hosts.excluding_aka.pluck(:hostname) }
       it { is_expected.to match_array(['www.foo.com', 'foo.com']) }
     end
+
+    describe 'with_cname_or_ip_address' do
+      before do
+        create(:host, cname: nil, ip_address: "192.168.0.1")
+        create(:host, cname: "foo.example.com", ip_address: nil)
+        create(:host, cname: nil, ip_address: nil)
+      end
+
+      subject { Host.with_cname_or_ip_address.pluck(:cname, :ip_address) }
+      it do
+        is_expected.to contain_exactly(
+          [nil, '192.168.0.1'],
+          ['foo.example.com', nil]
+        )
+      end
+    end
   end
 
   describe '#aka?' do
@@ -139,8 +155,8 @@ describe Host do
       end
     end
 
-    context 'businesslink events CDN CNAME' do
-      subject { build(:host, cname: 'redirector-cdn-ssl-events-businesslink.production.govuk.service.gov.uk') }
+    context 'alternate CDN CNAME' do
+      subject { build(:host, cname: 'bouncer-cdn.production.govuk.service.gov.uk') }
 
       describe '#redirected_by_gds?' do
         subject { super().redirected_by_gds? }
@@ -148,8 +164,8 @@ describe Host do
       end
     end
 
-    context 'IP pointing at the redirector EC2 box' do
-      subject { build(:host, cname: nil, ip_address: '46.137.92.159') }
+    context 'businesslink events CDN CNAME' do
+      subject { build(:host, cname: 'redirector-cdn-ssl-events-businesslink.production.govuk.service.gov.uk') }
 
       describe '#redirected_by_gds?' do
         subject { super().redirected_by_gds? }
@@ -166,8 +182,8 @@ describe Host do
       end
     end
 
-    context 'no CNAME (A-record only)' do
-      subject { build(:host, cname: nil) }
+    context 'no CNAME or A records' do
+      subject { build(:host, cname: nil, ip_address: nil) }
 
       describe '#redirected_by_gds?' do
         subject { super().redirected_by_gds? }
@@ -181,6 +197,15 @@ describe Host do
       describe '#redirected_by_gds?' do
         subject { super().redirected_by_gds? }
         it { is_expected.to be_falsey }
+      end
+    end
+
+    context 'IP pointing at Bouncer' do
+      subject { build(:host, cname: nil, ip_address: '151.101.0.204') }
+
+      describe '#redirected_by_gds?' do
+        subject { super().redirected_by_gds? }
+        it { is_expected.to be_truthy }
       end
     end
   end

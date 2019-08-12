@@ -9,7 +9,7 @@ describe ImportBatch do
       let(:site) { create(:site_without_host) }
 
       before do
-        site.hosts = [host]
+        site.hosts << host
       end
 
       describe 'old_urls includes URLs for this site' do
@@ -17,7 +17,7 @@ describe ImportBatch do
           build(:import_batch, site: site, raw_csv: <<-CSV.strip_heredoc
               old url,new url
               http://a.com/old,
-            CSV
+          CSV
           )
         end
 
@@ -29,7 +29,7 @@ describe ImportBatch do
           build(:import_batch, site: site, raw_csv: <<-CSV.strip_heredoc
               old url,new url
               http://other.com/old,
-            CSV
+          CSV
           )
         end
 
@@ -45,7 +45,7 @@ describe ImportBatch do
           build(:import_batch, site: site, raw_csv: <<-CSV.strip_heredoc
               old url,new url
               old,
-            CSV
+          CSV
           )
         end
 
@@ -63,7 +63,7 @@ describe ImportBatch do
           build(:import_batch, raw_csv: <<-CSV.strip_heredoc
               old url,new url
               /old,#{too_long_url}
-            CSV
+          CSV
           )
         end
 
@@ -78,7 +78,7 @@ describe ImportBatch do
           build(:import_batch, raw_csv: <<-CSV.strip_heredoc
               old url,new url
               /old,www.gov.uk
-            CSV
+          CSV
           )
         end
 
@@ -93,7 +93,7 @@ describe ImportBatch do
           build(:import_batch, raw_csv: <<-CSV.strip_heredoc
               old url,new url
               /old,http://evil.com
-            CSV
+          CSV
           )
         end
 
@@ -112,13 +112,13 @@ describe ImportBatch do
               /old-4,http://evil.com
               /old-5,http://evil.com
               /old-6,http://also-bad.com
-            CSV
+          CSV
           )
         end
 
         before { expect(mappings_batch).not_to be_valid }
         it 'should include the error message once per unique new URL' do
-          expect(mappings_batch.errors[:new_urls].size).to eql(2)
+          expect(mappings_batch.errors.details[:new_urls].size).to eql(2)
         end
       end
     end
@@ -130,7 +130,7 @@ describe ImportBatch do
           build(:import_batch, raw_csv: <<-CSV.strip_heredoc
               old url,new url
               /old,#{too_long_url}
-            CSV
+          CSV
           )
         end
 
@@ -144,14 +144,16 @@ describe ImportBatch do
 
   describe 'creating entries' do
     let(:site) { create(:site, query_params: 'significant') }
-    let!(:mappings_batch) { create(:import_batch, site: site,
-                                        raw_csv: raw_csv
-                                      ) }
+    let!(:mappings_batch) {
+      create(:import_batch, site: site,
+                            raw_csv: raw_csv)
+    }
     context 'rosy case' do
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                        /old,https://www.gov.uk/new
-                      CSV
-                    }
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          /old,https://www.gov.uk/new
+        CSV
+      }
 
       it 'should create an entry for each data row' do
         expect(mappings_batch.entries.count).to eq(1)
@@ -181,12 +183,13 @@ describe ImportBatch do
     end
 
     context 'with headers' do
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                        old url,new url
-                        /old,https://www.gov.uk/new
-                        old_url, new_url
-                      CSV
-                    }
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          old url,new url
+          /old,https://www.gov.uk/new
+          old_url, new_url
+        CSV
+      }
 
       it 'should ignore headers' do
         expect(mappings_batch.entries.count).to eq(1)
@@ -196,11 +199,12 @@ describe ImportBatch do
     end
 
     context 'with blank lines' do
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                        /old,https://www.gov.uk/new
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          /old,https://www.gov.uk/new
 
-                      CSV
-                    }
+        CSV
+      }
 
       it 'should ignore blank lines' do
         expect(mappings_batch.entries.count).to eq(1)
@@ -210,11 +214,12 @@ describe ImportBatch do
     end
 
     context 'with lines containing only a separator' do
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                        /old,https://www.gov.uk/new
-                        ,
-                      CSV
-                    }
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          /old,https://www.gov.uk/new
+          ,
+        CSV
+      }
 
       it 'should ignore those lines' do
         expect(mappings_batch.entries.count).to eq(1)
@@ -225,10 +230,11 @@ describe ImportBatch do
 
     context 'archives' do
       context 'without a custom archive URL' do
-        let(:raw_csv) { <<-CSV.strip_heredoc
-                    /old,TNA
-                  CSV
-                }
+        let(:raw_csv) {
+          <<-CSV.strip_heredoc
+            /old,TNA
+          CSV
+        }
         it 'should create an entry for each data row' do
           expect(mappings_batch.entries.count).to eq(1)
         end
@@ -259,11 +265,12 @@ describe ImportBatch do
       end
 
       context 'with custom archive URL' do
-        let(:archive_url) { 'http://webarchive.nationalarchives.gov.uk/*/http://a.com' }
-        let(:raw_csv) { <<-CSV.strip_heredoc
-                    /old,#{archive_url}
-                  CSV
-                }
+        let(:archive_url) { 'http://webarchive.nationalarchives.gov.uk/20160701131101/http://blogs.bis.gov.uk/exportcontrol/open-licensing/httpblogs-bis-gov-ukexportcontroluncategorizednotice-to-exporters-201415-uk-suspends-all-licences-and-licence-applications-for-export-to-russian-military-that-could-be-used-against-ukraine/' }
+        let(:raw_csv) {
+          <<-CSV.strip_heredoc
+            /old,#{archive_url}
+          CSV
+        }
         it 'should create an entry for each data row' do
           expect(mappings_batch.entries.count).to eq(1)
         end
@@ -295,10 +302,11 @@ describe ImportBatch do
     end
 
     context 'unresolved' do
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                  /old
-                CSV
-              }
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          /old
+        CSV
+      }
       it 'should create an entry for each data row' do
         expect(mappings_batch.entries.count).to eq(1)
       end
@@ -324,10 +332,11 @@ describe ImportBatch do
     end
 
     context 'the old URL is an absolute URL, not a path' do
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                  http://#{site.default_host.hostname}/old
-                CSV
-              }
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          http://#{site.default_host.hostname}/old
+        CSV
+      }
 
       it 'sets the path to be only the path' do
         expect(mappings_batch.entries.first.path).to eql('/old')
@@ -335,11 +344,12 @@ describe ImportBatch do
     end
 
     context 'the old URL canonicalizes to a homepage path' do
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                  /?foo
-                  /a
-                CSV
-              }
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          /?foo
+          /a
+        CSV
+      }
 
       it 'does not create an entry for the homepage row' do
         expect(mappings_batch.entries.pluck(:path)).to eql(['/a'])
@@ -347,13 +357,14 @@ describe ImportBatch do
     end
 
     context 'deduplicating rows' do
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                  /old,
-                  /old?insignificant,TNA
-                  /OLD,http://a.gov.uk/new
-                  /old,http://a.gov.uk/ignore-later-redirects
-                CSV
-              }
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          /old,
+          /old?insignificant,TNA
+          /OLD,http://a.gov.uk/new
+          /old,http://a.gov.uk/ignore-later-redirects
+        CSV
+      }
 
       it 'should canonicalize and deduplicate before creating entries' do
         expect(mappings_batch.entries.count).to eq(1)
@@ -367,13 +378,14 @@ describe ImportBatch do
 
     context 'existing mappings' do
       let(:existing_mapping) { create(:mapping, site: site, path: '/old') }
-      let(:raw_csv) { <<-CSV.strip_heredoc
-                        #{existing_mapping.path}
-                      CSV
-                    }
+      let(:raw_csv) {
+        <<-CSV.strip_heredoc
+          #{existing_mapping.path}
+        CSV
+      }
 
       it 'should relate the entry to the existing mapping' do
-        entry = mappings_batch.entries.detect { |entry| entry.path == existing_mapping.path }
+        entry = mappings_batch.entries.detect { |mapping_entry| mapping_entry.path == existing_mapping.path }
         expect(entry).not_to be_nil
         expect(entry.mapping).to eq(existing_mapping)
       end
@@ -384,13 +396,15 @@ describe ImportBatch do
     let(:site) { create(:site) }
 
     subject(:mappings_batch) do
-      create(:import_batch, site: site,
-             tag_list: tag_list,
-             raw_csv: <<-CSV.strip_heredoc
-                        #{path_to_be_redirected},#{new_url}
-                        #{path_to_be_archived},#{archive_url}
-                      CSV
-                 )
+      create(
+        :import_batch,
+        site: site,
+        tag_list: tag_list,
+        raw_csv: <<-CSV.strip_heredoc
+                   #{path_to_be_redirected},#{new_url}
+                   #{path_to_be_archived},#{archive_url}
+        CSV
+      )
     end
 
     let(:path_to_be_redirected) { '/a' }

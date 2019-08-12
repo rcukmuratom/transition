@@ -1,22 +1,22 @@
 require 'transition/history'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :mapping do
     transient do
       as_user { build(:user, id: 1, name: 'test user') }
     end
 
-    type 'archive'
+    type { 'archive' }
     sequence(:path) { |n| "/foo-#{n}" }
     association :site, strategy: :build
 
     factory :archived
     factory :redirect do
-      type 'redirect'
-      new_url 'https://www.gov.uk/somewhere'
+      type { 'redirect' }
+      new_url { 'https://www.gov.uk/somewhere' }
     end
     factory :unresolved do
-      type 'unresolved'
+      type { 'unresolved' }
     end
 
     before(:create) do |_, evaluator|

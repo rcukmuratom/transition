@@ -27,15 +27,18 @@ describe HitsController do
     ]
   end
 
+  around(:all) do |example|
+    Timecop.freeze(Date.new(2013, 1, 1)) { example.run }
+  end
+
   before do
-    Timecop.freeze(Date.new(2013, 01, 01))
     login_as_stub_user
     Transition::Import::DailyHitTotals.from_hits!
   end
 
   describe '#category' do
     before do
-      get :category, site_id: site, category: test_category_name
+      get :category, params: { site_id: site, category: test_category_name }
     end
 
     subject(:category)      { assigns[:category] }
@@ -62,7 +65,7 @@ describe HitsController do
         expect(sum_of_hit_counts).to eq(6)
       end
       it 'groups hits by path and status' do
-        results = category.hits.map {|r| [r.http_status, r.path, r.count]}
+        results = category.hits.map { |r| [r.http_status, r.path, r.count] }
         expect(results).to eq([
           ['410', '/article/123', 6]
         ])
@@ -82,7 +85,7 @@ describe HitsController do
     shared_examples 'it has hits and points whether or not we used a view' do
       it 'has paths once for each status ordered by descending count' do
         expect(paths).to eq([['410', '/article/123', 6],
-                         ['404', '/article/123', 2]])
+                             ['404', '/article/123', 2]])
       end
       it 'has four points' do
         expect(category.points.size).to eq(4)
@@ -93,7 +96,7 @@ describe HitsController do
       before do
         expect(site).not_to receive(:precomputed_all_hits)
 
-        get :index, site_id: site, period: 'all-time'
+        get :index, params: { site_id: site, period: 'all-time' }
       end
 
       it_behaves_like 'it has hits and points whether or not we used a view'
@@ -108,7 +111,7 @@ describe HitsController do
 
           expect(site).to receive(:precomputed_all_hits).and_call_original
 
-          get :index, site_id: site, period: 'all-time'
+          get :index, params: { site_id: site, period: 'all-time' }
         end
 
         it_behaves_like 'it has hits and points whether or not we used a view'
@@ -122,12 +125,11 @@ describe HitsController do
 
           expect(site).not_to receive(:precomputed_all_hits)
 
-          get :index, site_id: site, period: 'all-time'
+          get :index, params: { site_id: site, period: 'all-time' }
         end
 
         it_behaves_like 'it has hits and points whether or not we used a view'
       end
     end
-
   end
 end

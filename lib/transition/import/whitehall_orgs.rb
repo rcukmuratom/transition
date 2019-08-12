@@ -20,17 +20,17 @@ module Transition
       end
 
       def each(&block)
-        organisations.each &block
+        organisations.each(&block)
       end
 
       def by_id
         @by_id ||= organisations.inject({}) do |hash, org|
-          hash[org.id] = org
+          hash[org['id']] = org
           hash
         end
       end
 
-      private
+    private
 
       def load_orgs
         if load_orgs_from_yaml?
@@ -45,11 +45,11 @@ module Transition
       end
 
       def load_orgs_from_yaml
-        GdsApi::Response.build_ostruct_recursively(YAML.load(File.read(@org_yaml_path)))
+        YAML.safe_load(File.read(@org_yaml_path))
       end
 
       def load_orgs_from_api
-        api = GdsApi::Organisations.new(Plek.current.find('whitehall-admin'))
+        api = GdsApi::Organisations.new(Plek.new.website_root)
         api.organisations.with_subsequent_pages.to_a
       end
     end

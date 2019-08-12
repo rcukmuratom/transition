@@ -11,16 +11,20 @@ class Host < ActiveRecord::Base
   validates :site, presence: true
   validate :canonical_host_id_xor_aka_present
 
-  after_update :update_hits_relations, :if => :site_id_changed?
+  after_update :update_hits_relations, if: :saved_change_to_site_id?
 
   scope :excluding_aka, -> { where(canonical_host_id: nil) }
 
-  FASTLY_ANYCAST_IPS = ['23.235.33.144', '23.235.37.144'] # To be used for new root domains
-  DYN_DNS_IPS        = ['216.146.46.10', '216.146.46.11'] # Used for a few domains we control
-  AMAZON_LEGACY_IP   = ['46.137.92.159']                  # We're migrating domains off this
-  REDIRECTOR_IPS     = FASTLY_ANYCAST_IPS + DYN_DNS_IPS + AMAZON_LEGACY_IP
+  scope :with_cname_or_ip_address, -> {
+    where('(cname IS NOT NULL) OR (ip_address IS NOT NULL)')
+  }
 
-  REDIRECTOR_CNAME = /^redirector-cdn[^.]*\.production\.govuk\.service\.gov\.uk$/
+  FASTLY_BOUNCER_SERVICE_MAP = %w(151.101.2.30 151.101.66.30 151.101.130.30 151.101.194.30).freeze # bouncer.gds.map.fastly.net.
+  FASTLY_NEW_BOUNCER_IPS = %w(151.101.0.204 151.101.64.204 151.101.128.204 151.101.192.204).freeze
+  FASTLY_ANYCAST_IPS = ['23.235.33.144', '23.235.37.144'].freeze # FIXME: These IPs are deprecated, Fastly would like to reallocate them
+  REDIRECTOR_IPS     = FASTLY_ANYCAST_IPS + FASTLY_BOUNCER_SERVICE_MAP + FASTLY_NEW_BOUNCER_IPS
+
+  REDIRECTOR_CNAME = /^(redirector|bouncer)-cdn[^.]*\.production\.govuk\.service\.gov\.uk$/.freeze
 
   def aka?
     hostname.start_with?('aka')

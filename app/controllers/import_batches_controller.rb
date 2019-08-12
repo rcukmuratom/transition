@@ -1,9 +1,11 @@
 class ImportBatchesController < ApplicationController
   include PaperTrail::Rails::Controller
+  include CheckSiteIsNotGlobal
 
-  before_filter :find_site
+  before_action :find_site
+  check_site_is_not_global
   checks_user_can_edit
-  before_filter :find_batch, only: [:preview, :import]
+  before_action :find_batch, only: %i[preview import]
 
   def new
     @batch = ImportBatch.new
@@ -42,10 +44,11 @@ class ImportBatchesController < ApplicationController
       end
     end
 
-    redirect_to site_mappings_path(@site)
+    redirect_to site_mappings_path(site_id: @site)
   end
 
 protected
+
   def batch_params
     params.require(:import_batch).permit(:tag_list, :raw_csv, :update_existing)
   end
