@@ -5,7 +5,7 @@ module Transition
     class FOIResponse
       extend Transition::Import::ConsoleJobWrapper
 
-      EXPORT_SITES = <<-postgreSQL
+      EXPORT_SITES = <<-POSTGRESQL.freeze
         COPY (
           SELECT
             abbr AS "Abbreviation",
@@ -19,9 +19,9 @@ module Transition
             FROM sites
             ORDER BY abbr
         ) TO STDOUT WITH DELIMITER ',' CSV HEADER;
-      postgreSQL
+      POSTGRESQL
 
-      EXPORT_HOSTS = <<-postgreSQL
+      EXPORT_HOSTS = <<-POSTGRESQL.freeze
         COPY (
         SELECT
           sites.abbr AS "Site abbreviation",
@@ -31,9 +31,9 @@ module Transition
           WHERE canonical_host_id IS NULL
           ORDER BY sites.abbr, hostname
         ) TO STDOUT WITH DELIMITER ',' CSV HEADER;
-      postgreSQL
+      POSTGRESQL
 
-      EXPORT_MAPPINGS = <<-postgreSQL
+      EXPORT_MAPPINGS = <<-POSTGRESQL.freeze
         COPY (
           SELECT
             sites.abbr AS "Site abbreviation",
@@ -47,7 +47,7 @@ module Transition
             WHERE sites.global_type IS NULL
             ORDER BY sites.abbr, path
         ) TO STDOUT WITH DELIMITER ',' CSV HEADER;
-      postgreSQL
+      POSTGRESQL
 
       def self.export!
         timestamp = Time.zone.now.iso8601
@@ -57,11 +57,11 @@ module Transition
       end
 
       def self.export_data(timestamp, table, sql)
-        start "Exporting #{table}" do |job|
+        start "Exporting #{table}" do |_job|
           File.open("tmp/#{table}-#{timestamp}.csv", 'w') do |f|
             ActiveRecord::Base.connection.raw_connection.tap do |raw_conn|
               raw_conn.copy_data(sql) do
-                while row = raw_conn.get_copy_data
+                while (row = raw_conn.get_copy_data)
                   f.write(row.force_encoding('UTF-8'))
                 end
               end
@@ -69,7 +69,6 @@ module Transition
           end
         end
       end
-
     end
   end
 end

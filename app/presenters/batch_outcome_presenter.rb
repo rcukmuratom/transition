@@ -36,18 +36,18 @@ class BatchOutcomePresenter
 
 private
 
-  def tagged_with(opts = {all: false, and: false})
+  def tagged_with(opts = { all: false, and: false })
     if @batch.tag_list.present?
       %(#{opts[:all] ? '. All ' : ''}#{opts[:and] ? ' and ' : ''}tagged with "#{@batch.tag_list}")
     end
   end
 
   def created_count
-    @_created_count ||= @batch.entries.without_existing_mappings.count
+    @created_count ||= @batch.entries.without_existing_mappings.count
   end
 
   def updated_count
-    @_updated_count ||= @batch.entries_to_process.with_existing_mappings.count
+    @updated_count ||= @batch.entries_to_process.with_existing_mappings.count
   end
 
   def mappings_created

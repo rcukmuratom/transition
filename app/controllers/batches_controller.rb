@@ -1,5 +1,5 @@
 class BatchesController < ApplicationController
-  before_filter :set_batch
+  before_action :set_batch
 
   def show
     body = {
@@ -11,6 +11,7 @@ class BatchesController < ApplicationController
   end
 
 private
+
   def set_batch
     @batch = current_user.mappings_batches.find(params[:id])
   rescue ActiveRecord::RecordNotFound

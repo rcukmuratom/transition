@@ -1,6 +1,6 @@
 class SitesController < ApplicationController
-  before_filter :find_site, only: [:edit, :update, :show]
-  before_filter :check_user_is_gds_editor, only: [:edit, :update]
+  before_action :find_site, only: [:edit, :update, :show]
+  before_action :check_user_is_gds_editor, only: [:edit, :update]
 
   def new
     @site = Site.new(organisation: organisation)

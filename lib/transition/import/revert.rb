@@ -23,6 +23,7 @@ module Transition
         end
 
       private
+
         def revert_safely!(abbr)
           Site.transaction do
             site = Site.find_by(abbr: abbr)
@@ -34,7 +35,7 @@ module Transition
             mappings_count = site.mappings.count
             hits_count = site.hits.count
             # checking hits also accounts for host_paths and daily_hit_totals
-            if mappings_count == 0 && hits_count == 0
+            if mappings_count.zero? && hits_count.zero?
               destroy_site_and_associations(site)
               console_puts "Deleted site #{abbr}"
             else
@@ -45,8 +46,8 @@ module Transition
 
         def destroy_site_and_associations(site)
           # We can ignore mappings batches - they're cleaned up overnight
-          site.hosts.each { |host| host.destroy }
-          site.destroy  # this also deletes the organisations_sites row
+          site.hosts.each(&:destroy)
+          site.destroy # this also deletes the organisations_sites row
         end
       end
     end

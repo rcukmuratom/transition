@@ -6,8 +6,8 @@ describe OrganisationsController do
   end
 
   describe '#index' do
-    let(:organisation_z) { create :organisation, title: 'Zzzzzz' }
-    let(:organisation_a) { create :organisation, title: 'Aaaaaa' }
+    let!(:organisation_z) { create :organisation, :with_site, title: 'Zzzzzz' }
+    let!(:organisation_a) { create :organisation, :with_site, title: 'Aaaaaa' }
 
     it 'orders organisations alphabetically' do
       get :index

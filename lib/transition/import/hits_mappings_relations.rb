@@ -14,10 +14,10 @@ module Transition
       end
 
       def refresh!
-        start('Refreshing host paths'                                 ) { refresh_host_paths! }
+        start('Refreshing host paths') { refresh_host_paths! }
         start('Adding missing mapping_id/canonical_path to host paths') { connect_mappings_to_host_paths! }
-        start('Updating hits from host paths'                         ) { refresh_hits_from_host_paths! }
-        start('Precomputing mapping hit counts'                       ) { precompute_mapping_hit_counts! }
+        start('Updating hits from host paths') { refresh_hits_from_host_paths! }
+        start('Precomputing mapping hit counts') { precompute_mapping_hit_counts! }
       end
 
       def self.refresh!(site = nil)
@@ -25,19 +25,23 @@ module Transition
       end
 
     private
+
       def in_site_hosts
-        host_ids = site.hosts.pluck(:id)
+        host_ids = site.reload.hosts.pluck(:id)
         " IN (#{host_ids.join(',')})"
       end
 
       def host_paths
-        site ? site.host_paths.where(mapping_id: nil) :
-                      HostPath.where(mapping_id: nil)
+        if site
+          site.host_paths.where(mapping_id: nil)
+        else
+          HostPath.where(mapping_id: nil)
+        end
       end
 
       def refresh_host_paths!
         and_host_is_in_site = site ? "AND hits.host_id #{in_site_hosts}" : ''
-        sql = <<-postgreSQL
+        sql = <<-POSTGRESQL
           INSERT INTO host_paths(host_id, path)
           SELECT hits.host_id, hits.path
           FROM   hits
@@ -50,7 +54,7 @@ module Transition
           #{and_host_is_in_site}
           GROUP  BY hits.host_id,
                     hits.path
-        postgreSQL
+        POSTGRESQL
         change_settings('work_mem' => '256MB') do
           ActiveRecord::Base.connection.execute(sql)
         end
@@ -58,16 +62,23 @@ module Transition
 
       def connect_mappings_to_host_paths!
         host_paths.includes(:host).find_each do |host_path|
-          site = host_path.host.site
+          site = host_path.host&.site
 
-          canonical_path     = site.canonical_path(host_path.path)
+          unless site
+            warn "#{host_path} not associated with a site"
+            next
+          end
+
+          canonical_path = site.canonical_path(host_path.path)
           mapping_id = Mapping.where(
-            path: canonical_path, site_id: site.id).pluck(:id).first
+            path: canonical_path, site_id: site.id
+          ).pluck(:id).first
 
           if host_path.mapping_id != mapping_id || host_path.canonical_path != canonical_path
             host_path.update_columns(
               mapping_id: mapping_id,
-              canonical_path: canonical_path)
+              canonical_path: canonical_path
+            )
           end
         end
       end
@@ -77,7 +88,7 @@ module Transition
 
         # IS DISTINCT FROM is effectively <> - see
         # https://gist.github.com/rgarner/7cccbc504de7c8d56702
-        sql = <<-postgreSQL
+        sql = <<-POSTGRESQL
           UPDATE hits
           SET  mapping_id = host_paths.mapping_id
           FROM host_paths
@@ -86,13 +97,13 @@ module Transition
             host_paths.path      = hits.path AND
             host_paths.mapping_id IS DISTINCT FROM hits.mapping_id
             #{and_host_is_in_site}
-        postgreSQL
+        POSTGRESQL
         ActiveRecord::Base.connection.execute(sql)
       end
 
       def precompute_mapping_hit_counts!
         where_host_is_in_site = site ? "WHERE host_id #{in_site_hosts}" : ''
-        sql = <<-postgreSQL
+        sql = <<-POSTGRESQL
           UPDATE mappings
           SET hit_count = with_counts.hit_count
           FROM (
@@ -104,7 +115,7 @@ module Transition
           WHERE
             mappings.id = with_counts.mapping_id AND
             mappings.hit_count IS DISTINCT FROM with_counts.hit_count
-        postgreSQL
+        POSTGRESQL
 
         ActiveRecord::Base.connection.execute(sql)
       end

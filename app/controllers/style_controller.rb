@@ -1,6 +1,3 @@
 class StyleController < ApplicationController
-
-  def index
-  end
-
+  def index; end
 end

@@ -1,5 +1,5 @@
 class OrganisationsController < ApplicationController
-  before_filter :set_organisation, only: [:show, :update, :edit]
+  before_action :set_organisation, only: [:show, :update, :edit]
 
   def index
     @organisations = Organisation.order(:title)
@@ -9,7 +9,7 @@ class OrganisationsController < ApplicationController
   def show
     sites = @organisation.sites.includes(:hosts)
     extra_sites = @organisation.extra_sites.includes(:hosts)
-    @sites = sites.concat(extra_sites).sort_by!(&:abbr)
+    @sites = (sites + extra_sites).sort_by(&:abbr)
   end
 
   def new

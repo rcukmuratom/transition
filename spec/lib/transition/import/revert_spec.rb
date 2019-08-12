@@ -19,7 +19,7 @@ describe Transition::Import::Revert::Sites do
     end
 
     context 'deleting sites which can be deleted' do
-      site_abbrs = ['ago', 'bis']
+      site_abbrs = %w(ago bis)
 
       before do
         Transition::Import::Revert::Sites.new(site_abbrs).revert_all!
@@ -70,7 +70,7 @@ describe Transition::Import::Revert::Sites do
 
     context 'trying to delete a site which doesn\'t exist' do
       before do
-        Transition::Import::Revert::Sites.new(['nonexistent_site']).revert_all!
+        Transition::Import::Revert::Sites.new(%w[nonexistent_site]).revert_all!
       end
 
       it 'should not delete any sites or any related data' do

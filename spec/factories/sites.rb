@@ -1,23 +1,23 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :site_without_host, class: Site do
     sequence(:abbr) { |n| "site-#{n}" }
-    homepage 'https://www.gov.uk/government/organisations/example-org'
-    query_params ''
+    homepage { 'https://www.gov.uk/government/organisations/example-org' }
+    query_params { '' }
     launch_date { 1.month.ago }
-    tna_timestamp '2012-08-16 22:40:15'
+    tna_timestamp { '2012-08-16 22:40:15' }
 
     association :organisation
 
     factory :site do # default site comes with a host {abbr}.gov.uk
       after(:build) do |site|
-        site.hosts << FactoryGirl.build(:host, hostname: "#{site.abbr}.gov.uk", site: site)
+        site.hosts << FactoryBot.build(:host, hostname: "#{site.abbr}.gov.uk", site: site)
       end
     end
 
     trait :with_mappings_and_hits do
       after(:build) do |site|
         if site.hosts.none?
-          site.hosts << FactoryGirl.build(:host, hostname: "#{site.abbr}.gov.uk", site: site)
+          site.hosts << FactoryBot.build(:host, hostname: "#{site.abbr}.gov.uk", site: site)
         end
 
         3.times do |n|

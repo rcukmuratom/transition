@@ -9,13 +9,13 @@ describe Postgres::MaterializedView do
   before do
     # All tests start with an unmodified pre_existing_view
     execute(
-      <<-postgreSQL
+      <<-POSTGRESQL
         DROP MATERIALIZED VIEW IF EXISTS pre_existing_view;
 
         CREATE MATERIALIZED VIEW pre_existing_view
         AS
           SELECT 1 AS unmodified;
-      postgreSQL
+      POSTGRESQL
     )
   end
 
@@ -32,7 +32,7 @@ describe Postgres::MaterializedView do
   describe '.get_body' do
     it 'gets the body' do
       expect(Postgres::MaterializedView.get_body(
-        'pre_existing_view'
+               'pre_existing_view'
       )).to include('SELECT 1')
     end
   end
@@ -96,13 +96,13 @@ describe Postgres::MaterializedView do
       create :organisation
 
       execute(
-        <<-postgreSQL
+        <<-POSTGRESQL
           DROP MATERIALIZED VIEW IF EXISTS refreshable_orgs;
 
           CREATE MATERIALIZED VIEW refreshable_orgs
           AS
             SELECT * FROM organisations;
-        postgreSQL
+        POSTGRESQL
       )
     end
 

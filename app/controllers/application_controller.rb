@@ -1,8 +1,8 @@
 class ApplicationController < ActionController::Base
   # include CommonAuthentication
 
-  before_filter :exclude_all_users_except_admins_during_maintenance
-  before_filter :authenticate
+  before_action :exclude_all_users_except_admins_during_maintenance
+  before_action :authenticate
 
   private def authenticate
     warden.authenticate!
@@ -35,13 +35,14 @@ class ApplicationController < ActionController::Base
     { user_id: current_user.id } if user_signed_in?
   end
 
-  def render_error(status, options={})
+  def render_error(status, options = {})
     @custom_header = options[:header]
     @custom_body = options[:body]
     render "errors/error_#{status}", status: status, layout: 'error_page'
   end
 
 private
+
   def verify_authenticity_token
     raise ActionController::InvalidAuthenticityToken unless verified_request?
   end

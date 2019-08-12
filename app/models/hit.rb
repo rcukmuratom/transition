@@ -10,7 +10,7 @@ class Hit < ActiveRecord::Base
   validates :path, presence: true, length: { maximum: 1024 }
   validates :count, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validates :http_status, presence: true, length: { maximum: 3 }
-  validates :host_id, uniqueness: { scope: [:path, :hit_on, :http_status], message: 'Hit data already exists for this host, path, date and status!' }
+  validates :host_id, uniqueness: { scope: %i[path hit_on http_status], message: 'Hit data already exists for this host, path, date and status!' }
 
   before_validation :normalize_hit_on
 
@@ -51,8 +51,9 @@ class Hit < ActiveRecord::Base
     "http://#{host.site.default_host.hostname}#{path}"
   end
 
-  protected
+protected
+
   def normalize_hit_on
-    self.hit_on = hit_on.beginning_of_day if hit_on_changed?
+    self.hit_on = hit_on.beginning_of_day if saved_change_to_hit_on?
   end
 end

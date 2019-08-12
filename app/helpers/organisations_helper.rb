@@ -1,6 +1,6 @@
 module OrganisationsHelper
   def date_or_not_yet(date)
-    date.nil? ? 'No date set' : (I18n.l date, :format => :govuk_date)
+    date.nil? ? 'No date set' : (I18n.l date, format: :govuk_date)
   end
 
   def add_indefinite_article(noun_phrase)
@@ -14,6 +14,7 @@ module OrganisationsHelper
 
   def relationship_display_name(organisation)
     return 'works with' if organisation.whitehall_type == 'Other'
+
     relationship_text = organisation.whitehall_type
     "is #{add_indefinite_article(relationship_text[0].downcase + relationship_text[1..-1])} of"
   end

@@ -1,11 +1,10 @@
 module HitsHelper
-
   def any_totals_for?(points_categories)
     points_categories && points_categories.find { |c| c.points && !c.points.empty? }
   end
 
   def no_hits_for_any?(sections)
-    sections.all? {|section| !section.hits.any? }
+    sections.all? { |section| section.hits.none? }
   end
 
   ##
@@ -37,7 +36,7 @@ module HitsHelper
     dates = {}
     cols  = [
         { label: 'Date', type: 'date' },
-        { label: 'Transition date line', type: 'string', p: {role: 'annotation'}}
+        { label: 'Transition date line', type: 'string', p: { role: 'annotation' } }
       ]
 
     categories.each do |category|
@@ -54,7 +53,7 @@ module HitsHelper
       rows << {
         c: [
              { v: "Date(#{date.year}, #{date.month - 1}, #{date.day})" },
-             { v: date == transition_date ? 'Transition' : ''},
+             { v: date == transition_date ? 'Transition' : nil },
              *categories.map do |c|
                count_for_category = category_counts[c.name] || 0
                { v: count_for_category, f: number_with_delimiter(count_for_category) }
@@ -80,7 +79,7 @@ module HitsHelper
 
   def show_hit_has_become?(hit)
     ((hit.archive? || hit.error?) && hit.mapping.redirect?) ||
-    ((hit.redirect? || hit.error?) && hit.mapping.archive?)
+      ((hit.redirect? || hit.error?) && hit.mapping.archive?)
   end
 
   def hit_is_now(hit)
@@ -103,25 +102,35 @@ module HitsHelper
   # Send the correct routing message for the current category and period
   def current_category_in_period_path(period)
     if @site
-      # Hits for a specific site
-      if params[:category]
-        category_site_hits_path(@site, category: params[:category], period: period.query_slug)
-      elsif viewing_all_hits?
-        site_hits_path(@site, period: period.query_slug)
-      else
-        summary_site_hits_path(@site, period: period.query_slug)
-      end
+      current_category_of_hits_for_specific_site(period)
     else
-      # Universal analytics
-      if params[:category]
-        hits_category_path(category: params[:category], period: period.query_slug)
-      else
-        hits_path(period: period.query_slug)
-      end
+      current_category_of_hits_for_universal_analytics(period)
     end
   end
 
   def viewing_all_hits?
     action_name == 'index'
+  end
+
+private
+
+  def current_category_of_hits_for_specific_site(period)
+    # Hits for a specific site
+    if params[:category]
+      category_site_hits_path(@site, category: params[:category], period: period.query_slug)
+    elsif viewing_all_hits?
+      site_hits_path(@site, period: period.query_slug)
+    else
+      summary_site_hits_path(@site, period: period.query_slug)
+    end
+  end
+
+  def current_category_of_hits_for_universal_analytics(period)
+    # Universal analytics
+    if params[:category]
+      hits_category_path(category: params[:category], period: period.query_slug)
+    else
+      hits_path(period: period.query_slug)
+    end
   end
 end

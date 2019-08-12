@@ -1,16 +1,29 @@
 require 'rails_helper'
 
 describe ImportBatchesController do
-  let(:site)    { create :site, abbr: 'moj' }
+  let(:site) { create :site, abbr: 'moj' }
+  let(:global_site) { create :site, global_type: 'archive' }
   let(:gds_bob) { create(:gds_editor, name: 'Bob Terwhilliger') }
 
   describe '#new' do
     context 'without permission to edit' do
       def make_request
-        get :new, site_id: site.abbr
+        get :new, params: { site_id: site.abbr }
       end
 
       it_behaves_like 'disallows editing by unaffiliated user'
+    end
+
+    context 'for a global site' do
+      before do
+        login_as gds_bob
+      end
+
+      def make_request
+        post :create, params: { site_id: global_site.abbr }
+      end
+
+      it_behaves_like 'disallows editing of a global site'
     end
   end
 
@@ -19,9 +32,17 @@ describe ImportBatchesController do
       login_as gds_bob
     end
 
+    context 'for a global site' do
+      def make_request
+        post :create, params: { site_id: global_site.abbr }
+      end
+
+      it_behaves_like 'disallows editing of a global site'
+    end
+
     context 'without permission to edit' do
       def make_request
-        post :create, site_id: site.abbr
+        post :create, params: { site_id: site.abbr }
       end
 
       it_behaves_like 'disallows editing by unaffiliated user'
@@ -29,13 +50,17 @@ describe ImportBatchesController do
 
     context 'with valid parameters' do
       let!(:whitelisted_host) { create :whitelisted_host, hostname: 'example.com' }
-      let(:stem)              { "http://#{whitelisted_host.hostname}/"  }
-      let(:long_url)          { "#{stem}#{'x' * (2048 - stem.length) }" }
+      let(:stem)              { "http://#{whitelisted_host.hostname}/" }
+      let(:long_url)          { "#{stem}#{'x' * (2048 - stem.length)}" }
       before do
-        post :create, site_id: site.abbr, import_batch: {
-          raw_csv: "/a,TNA\n/b,#{long_url}",
-          tag_list: ''
-        }
+        post :create,
+          params: {
+            site_id: site.abbr,
+            import_batch: {
+              raw_csv: "/a,TNA\n/b,#{long_url}",
+              tag_list: ''
+            }
+          }
       end
 
       it 'creates a batch for the site' do
@@ -59,7 +84,7 @@ describe ImportBatchesController do
 
         describe '#type' do
           subject { super().type }
-          it { is_expected.to eql('archive')}
+          it { is_expected.to eql('archive') }
         end
       end
 
@@ -73,12 +98,12 @@ describe ImportBatchesController do
 
         describe '#type' do
           subject { super().type }
-          it { is_expected.to eql('redirect')}
+          it { is_expected.to eql('redirect') }
         end
 
         describe '#new_url' do
           subject { super().new_url }
-          it { is_expected.to eql(long_url)}
+          it { is_expected.to eql(long_url) }
         end
       end
 
@@ -89,9 +114,13 @@ describe ImportBatchesController do
 
     context 'with invalid parameters' do
       before do
-        post :create, site_id: site.abbr, import_batch: {
-          raw_csv: 'a,', tag_list: ''
-        }
+        post :create,
+          params: {
+            site_id: site.abbr,
+            import_batch: {
+              raw_csv: 'a,', tag_list: ''
+            }
+          }
       end
 
       it 'does not create a batch for the site' do
@@ -112,12 +141,26 @@ describe ImportBatchesController do
     end
   end
 
-  describe '#preview without permission to edit' do
-    def make_request
-      get :preview, site_id: site.abbr, id: 1
+  describe '#preview' do
+    context 'without permission to edit' do
+      def make_request
+        get :preview, params: { site_id: site.abbr, id: 1 }
+      end
+
+      it_behaves_like 'disallows editing by unaffiliated user'
     end
 
-    it_behaves_like 'disallows editing by unaffiliated user'
+    context 'for a global site' do
+      before do
+        login_as gds_bob
+      end
+
+      def make_request
+        post :create, params: { site_id: global_site.abbr }
+      end
+
+      it_behaves_like 'disallows editing of a global site'
+    end
   end
 
   describe '#import' do
@@ -127,11 +170,30 @@ describe ImportBatchesController do
       login_as gds_bob
     end
 
+    context 'for a global site' do
+      def make_request
+        post :create, params: { site_id: global_site.abbr }
+      end
+
+      it_behaves_like 'disallows editing of a global site'
+    end
+
+    context 'without permission to edit' do
+      def make_request
+        get :preview, params: { site_id: site.abbr, id: 1 }
+      end
+
+      it_behaves_like 'disallows editing by unaffiliated user'
+    end
+
     context 'a small batch' do
       def make_request
-        post :import, site_id: site.abbr,
+        post :import,
+          params: {
+            site_id: site.abbr,
             import_batch: { update_existing: 'true' },
             id: batch.id
+          }
       end
 
       include_examples 'it processes a small batch inline'
@@ -141,9 +203,12 @@ describe ImportBatchesController do
       let(:large_batch) { create(:large_import_batch, site: site) }
 
       def make_request
-        post :import, site_id: site.abbr,
-              import_batch: { update_existing: 'true' },
-              id: large_batch.id
+        post :import,
+          params: {
+            site_id: site.abbr,
+            import_batch: { update_existing: 'true' },
+            id: large_batch.id
+          }
       end
 
       include_examples 'it processes a large batch in the background'
@@ -151,7 +216,7 @@ describe ImportBatchesController do
 
     context 'a batch which has been submitted already' do
       def make_request
-        post :import, site_id: site.abbr, id: batch.id, import_batch: {}
+        post :import, params: { site_id: site.abbr, id: batch.id, import_batch: {} }
       end
 
       include_examples 'it doesn\'t requeue a batch which has already been queued'

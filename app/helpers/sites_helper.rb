@@ -1,4 +1,6 @@
 module SitesHelper
+  include MappingsHelper
+
   def big_launch_days_number(site)
     return nil if site.launch_date.nil?
 
@@ -8,7 +10,7 @@ module SitesHelper
       class: 'big-number'
     )
 
-    should_have_launched = Date.today > site.launch_date
+    should_have_launched = Time.zone.today > site.launch_date
     small_text = content_tag(
       :div,
       if site.transition_status == :live
@@ -32,24 +34,24 @@ module SitesHelper
 
   def site_redirects_link(site)
     link_to pluralize(number_with_delimiter(site.mappings.redirects.count), 'redirect'),
-      site_mappings_path(site, type: 'redirect'),
+      site_mappings_path(site_id: site, type: 'redirect'),
       class: 'link-muted'
   end
 
   def site_archives_link(site)
     link_to pluralize(number_with_delimiter(site.mappings.archives.count), 'archive'),
-      site_mappings_path(site, type: 'archive'),
+      site_mappings_path(site_id: site, type: 'archive'),
       class: 'link-muted'
   end
 
   def site_unresolved_link(site)
     link_to "#{number_with_delimiter(site.mappings.unresolved.count)} unresolved",
-      site_mappings_path(site, type: 'unresolved'),
+      site_mappings_path(site_id: site, type: 'unresolved'),
       class: 'link-muted'
   end
 
   def site_unresolved_mappings_percentage(site)
-    if site.mappings.unresolved.count > 0 && site.mappings.count > 0
+    if site.mappings.unresolved.count.positive? && site.mappings.count.positive?
       friendly_hit_percentage((site.mappings.unresolved.count.to_f / site.mappings.count) * 100)
     else
       '0%'
