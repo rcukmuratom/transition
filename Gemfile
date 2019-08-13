@@ -23,6 +23,7 @@ gem 'activerecord-import'
 gem 'sidekiq', '5.2.7'
 gem 'aws-sdk-s3', '~> 1.45'
 gem 'puma' , '~> 4.1.0'
+gem 'rollbar'
 
 gem 'sass'
 gem 'sass-rails'

@@ -1,20 +1,25 @@
+---
 version: 1
 update_configs:
   - package_manager: "ruby:bundler"
     directory: "/"
     update_schedule: "live"
     allowed_updates:
-    - match:
+      - match:
         dependency_name: "rails_warden"
-    - match:
+      - match:
         dependency_name: "omniauth"
-    - match:
+      - match:
         dependency_name: "omniauth-zendesk-oauth2"
-    - match:
+      - match:
         dependency_name: "bootstrap-sass"
-    - match:
+      - match:
         dependency_name: "sidekiq"
-    - match:
+      - match:
         dependency_name: "dotenv-rails"
-    - match:
+      - match:
         dependency_name: "byebug"
+      - match:
+        dependency_name: "rollbar"
+      - match:
+        dependency_name: "puma"
