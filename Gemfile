@@ -20,7 +20,7 @@ gem 'gretel'
 gem 'acts-as-taggable-on'
 gem 'select2-rails', '3.5.7'
 gem 'activerecord-import'
-gem 'sidekiq', '4.1.1'
+gem 'sidekiq', '5.2.7'
 gem 'aws-sdk-s3', '~> 1.45'
 
 gem 'sass'
