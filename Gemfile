@@ -22,6 +22,7 @@ gem 'select2-rails', '3.5.7'
 gem 'activerecord-import'
 gem 'sidekiq', '4.1.1'
 gem 'aws-sdk-s3', '~> 1.45'
+gem 'puma' , '~> 4.1.0'
 
 gem 'sass'
 gem 'sass-rails'
