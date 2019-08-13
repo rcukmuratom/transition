@@ -23,6 +23,7 @@ gem "whenever"
 gem 'sidekiq', '~> 5.2'
 gem 'redis-namespace'
 gem 'rails_warden', '0.6.0'
+gem 'puma', '~> 4.1'
 
 # Custom authentication...
 gem 'omniauth', '1.9.0'
