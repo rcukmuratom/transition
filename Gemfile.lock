@@ -456,6 +456,7 @@ DEPENDENCIES
   pg
   plek
   pry
+  puma (~> 4.1.0)
   rails (= 5.1.6.2)
   rails-controller-testing
   rails_warden (= 0.5.8)
