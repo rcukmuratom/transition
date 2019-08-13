@@ -1,6 +1,5 @@
 version: "1"
 rules:
-  -
-    base: master
+  - base: master
     upstream: alphagov:master
     mergeMethod: merge
