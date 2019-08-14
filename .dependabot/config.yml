@@ -6,20 +6,20 @@ update_configs:
     update_schedule: "live"
     allowed_updates:
       - match:
-        dependency_name: "rails_warden"
+          dependency_name: "rails_warden"
       - match:
-        dependency_name: "omniauth"
+          dependency_name: "omniauth"
       - match:
-        dependency_name: "omniauth-zendesk-oauth2"
+          dependency_name: "omniauth-zendesk-oauth2"
       - match:
-        dependency_name: "bootstrap-sass"
+          dependency_name: "bootstrap-sass"
       - match:
-        dependency_name: "sidekiq"
+          dependency_name: "sidekiq"
       - match:
-        dependency_name: "dotenv-rails"
+          dependency_name: "dotenv-rails"
       - match:
-        dependency_name: "byebug"
+          dependency_name: "byebug"
       - match:
-        dependency_name: "rollbar"
+          dependency_name: "rollbar"
       - match:
-        dependency_name: "puma"
+          dependency_name: "puma"
