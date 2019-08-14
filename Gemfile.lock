@@ -486,6 +486,7 @@ DEPENDENCIES
   activerecord-session_store
   acts-as-taggable-on
   aws-sdk-s3 (~> 1.60)
+  bootstrap-sass (= 3.4.1)
   cucumber-rails
   database_cleaner
   dotenv-rails

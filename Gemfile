@@ -20,6 +20,8 @@ gem "plek"
 gem "rails", "5.2.3"
 gem "select2-rails", "3.5.7"
 gem "whenever"
+
+gem 'bootstrap-sass', '3.4.1'
 gem 'sidekiq', '~> 5.2'
 gem 'redis-namespace'
 gem 'rails_warden', '0.6.0'
