@@ -4,7 +4,7 @@ gem 'rails', '5.1.6.2'
 gem 'activerecord-session_store'
 gem 'pg'
 gem 'optic14n' # Ideally version should be synced with bouncer
-gem 'rails_warden', '0.5.8'
+gem 'rails_warden', '0.6.0'
 gem 'omniauth', '1.9.0'
 gem 'omniauth-zendesk-oauth2', '0.1'
 gem 'bootstrap-sass', '3.3.5.1'
