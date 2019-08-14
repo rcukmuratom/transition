@@ -7,7 +7,7 @@ gem 'optic14n' # Ideally version should be synced with bouncer
 gem 'rails_warden', '0.5.8'
 gem 'omniauth', '1.3.1'
 gem 'omniauth-zendesk-oauth2', '0.1'
-gem 'bootstrap-sass', '3.3.5.1'
+gem 'bootstrap-sass', '3.4.1'
 gem 'plek'
 gem 'htmlentities'
 gem 'kaminari'
