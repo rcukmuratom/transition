@@ -21,6 +21,11 @@ gem "plek"
 gem "rails", "5.2.3"
 gem "select2-rails", "3.5.7"
 gem "whenever"
+gem 'rails_warden', '0.6.0'
+
+# Custom authentication...
+gem 'omniauth', '1.3.1'
+gem 'omniauth-zendesk-oauth2', '0.1'
 
 gem "sass"
 gem "sass-rails"

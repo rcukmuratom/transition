@@ -11,6 +11,10 @@ Rails.application.routes.draw do
   match "/422" => "errors#error_422", via: %i[get post]
   match "/500" => "errors#error_500", via: %i[get post]
 
+  get 'login', to: 'authentication#new'
+  get 'auth/zendesk/callback', to: 'authentication#create'
+  get 'logout', to: 'authentication#destroy'
+
   resources :hosts, only: [:index]
 
   resources :organisations, only: %i[show index]
