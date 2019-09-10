@@ -182,13 +182,6 @@ GEM
       sentry-raven (>= 2.7.1, < 2.14.0)
       statsd-ruby (~> 1.4.0)
       unicorn (>= 5.4, < 5.6)
-    govuk_sidekiq (3.0.5)
-      gds-api-adapters (>= 19.1.0)
-      govuk_app_config (>= 1.1)
-      redis-namespace (~> 1.6)
-      sidekiq (>= 5, < 6)
-      sidekiq-logging-json (~> 0.0)
-      sidekiq-statsd (>= 2.1)
     govuk_test (1.0.3)
       brakeman (~> 4.6)
       capybara
@@ -430,11 +423,6 @@ GEM
       rack (>= 1.5.0)
       rack-protection (>= 1.5.0)
       redis (>= 3.3.5, < 5)
-    sidekiq-logging-json (0.0.19)
-      sidekiq (>= 3)
-    sidekiq-statsd (2.1.0)
-      activesupport
-      sidekiq (>= 3.3.1)
     signet (0.12.0)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -506,7 +494,6 @@ DEPENDENCIES
   google-api-client
   govuk_admin_template
   govuk_app_config (~> 2.0)
-  govuk_sidekiq (~> 3.0)
   govuk_test (~> 1.0.3)
   gretel
   htmlentities
@@ -524,6 +511,7 @@ DEPENDENCIES
   rails (= 5.2.3)
   rails-controller-testing
   rails_warden (= 0.6.0)
+  redis-namespace
   rspec-collection_matchers
   rspec-rails
   rubocop-govuk
@@ -531,6 +519,7 @@ DEPENDENCIES
   sass-rails
   select2-rails (= 3.5.7)
   shoulda-matchers
+  sidekiq (~> 5.2)
   sprockets (~> 3)
   timecop
   uglifier

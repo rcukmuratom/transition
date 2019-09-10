@@ -9,7 +9,6 @@ gem "gds-sso"
 gem "google-api-client"
 gem "govuk_admin_template"
 gem "govuk_app_config", "~> 2.0"
-gem "govuk_sidekiq", "~> 3.0"
 gem "gretel"
 gem "htmlentities"
 gem "kaminari"
@@ -21,6 +20,8 @@ gem "plek"
 gem "rails", "5.2.3"
 gem "select2-rails", "3.5.7"
 gem "whenever"
+gem 'sidekiq', '~> 5.2'
+gem 'redis-namespace'
 gem 'rails_warden', '0.6.0'
 
 # Custom authentication...
