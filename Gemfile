@@ -49,6 +49,7 @@ group :test do
 end
 
 group :development, :test do
+  gem "dotenv-rails"
   gem "jasmine"
   gem "pry"
   gem "rspec-collection_matchers"
