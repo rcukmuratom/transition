@@ -355,6 +355,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     retriable (3.1.2)
+    rollbar (2.23.2)
     rspec-collection_matchers (1.2.0)
       rspec-expectations (>= 2.99.0.beta1)
     rspec-core (3.9.0)
@@ -513,6 +514,7 @@ DEPENDENCIES
   rails-controller-testing
   rails_warden (= 0.6.0)
   redis-namespace
+  rollbar (~> 2.22)
   rspec-collection_matchers
   rspec-rails
   rubocop-govuk
