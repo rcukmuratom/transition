@@ -219,6 +219,30 @@ describe Transition::Import::Hits do
     end
   end
 
+  describe '.from_clf!' do
+    context 'when there is a host that matches the IP address' do
+      it 'imports the data' do
+        host = create :host, hostname: 'clf.gov.uk'
+
+        Transition::Import::Hits.from_clf!('spec/fixtures/hits/example.clf')
+
+        expect(Hit.count).to eql(1)
+        hit = Hit.first
+        expect(hit.path).to eql('/start.html')
+        expect(hit.count).to eql(3)
+        expect(hit.hit_on).to eql(Date.new(2002, 7, 1))
+        expect(hit.host_id).to eql(host.id)
+      end
+    end
+
+    context 'when there is no matching host' do
+      it 'does not create a hit record' do
+        Transition::Import::Hits.from_clf!('spec/fixtures/hits/example.clf')
+        expect(Hit.count).to eql(0)
+      end
+    end
+  end
+
   describe '.from_s3!' do
     let(:bucket) { 'bucket' }
     let(:s3) { Aws::S3::Client.new(stub_responses: true) }
