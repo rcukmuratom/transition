@@ -36,4 +36,10 @@ namespace :import do
       end
     end
   end
+
+  desc 'Import hits from S3 files in a combined log format'
+  task :from_clf_files, [:bucket] => :environment do |_, args|
+    bucket = args[:bucket]
+    IngestFromCombinedLogFormat.perform_async(bucket)
+  end
 end
