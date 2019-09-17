@@ -79,7 +79,6 @@ GEM
     bootstrap-sass (3.4.1)
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
-    brakeman (4.7.1)
     builder (3.2.4)
     capybara (3.29.0)
       addressable
@@ -91,6 +90,7 @@ GEM
       xpath (~> 3.2)
     childprocess (3.0.0)
     chronic (0.10.2)
+    cliver (0.3.2)
     coderay (1.1.2)
     concurrent-ruby (1.1.6)
     connection_pool (2.2.2)
@@ -119,6 +119,9 @@ GEM
       railties (>= 4.2, < 7)
     cucumber-tag_expressions (1.1.1)
     cucumber-wire (0.0.1)
+    cuprite (0.9)
+      capybara (>= 2.1, < 4)
+      ferrum (~> 0.7.0)
     database_cleaner (1.8.2)
     declarative (0.0.10)
     declarative-option (0.1.0)
@@ -138,6 +141,11 @@ GEM
       railties (>= 4.2.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
+    ferrum (0.7)
+      addressable (~> 2.6)
+      cliver (~> 0.3)
+      concurrent-ruby (~> 1.1)
+      websocket-driver (>= 0.6, < 0.8)
     ffi (1.11.1)
     gds-api-adapters (63.4.0)
       addressable
@@ -182,12 +190,6 @@ GEM
       sentry-raven (>= 2.7.1, < 2.14.0)
       statsd-ruby (~> 1.4.0)
       unicorn (>= 5.4, < 5.6)
-    govuk_test (1.0.3)
-      brakeman (~> 4.6)
-      capybara
-      puma
-      selenium-webdriver (>= 3.142)
-      webdrivers (>= 4)
     gretel (3.0.9)
       rails (>= 3.1.0)
     hashdiff (1.0.0)
@@ -290,6 +292,10 @@ GEM
     pg (1.2.2)
     phantomjs (2.1.1.0)
     plek (3.0.0)
+    poltergeist (1.18.1)
+      capybara (>= 2.1, < 4)
+      cliver (~> 0.3.1)
+      websocket-driver (>= 0.2.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -487,7 +493,9 @@ DEPENDENCIES
   acts-as-taggable-on
   aws-sdk-s3 (~> 1.60)
   bootstrap-sass (= 3.4.1)
+  capybara
   cucumber-rails
+  cuprite
   database_cleaner
   dotenv-rails
   factory_bot_rails
@@ -496,7 +504,6 @@ DEPENDENCIES
   google-api-client
   govuk_admin_template
   govuk_app_config (~> 2.0)
-  govuk_test (~> 1.0.3)
   gretel
   htmlentities
   jasmine
@@ -509,6 +516,7 @@ DEPENDENCIES
   paper_trail (= 10.3.1)
   pg
   plek
+  poltergeist
   pry
   puma (~> 4.1)
   rails (= 5.2.3)
@@ -522,12 +530,14 @@ DEPENDENCIES
   sass
   sass-rails
   select2-rails (= 3.5.7)
+  selenium-webdriver
   shoulda-matchers
   sidekiq (~> 5.2)
   sprockets (~> 3)
   timecop
   uglifier
   web-console
+  webdrivers
   webmock
   whenever
 

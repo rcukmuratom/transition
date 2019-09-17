@@ -42,15 +42,19 @@ group :development do
 end
 
 group :test do
-  gem "cucumber-rails", require: false
-  gem "database_cleaner"
-  gem "factory_bot_rails"
-  gem "govuk_test", "~> 1.0.3"
-  gem "launchy" # Primarily for save_and_open_page support in Capybara
-  gem "rails-controller-testing"
-  gem "shoulda-matchers"
-  gem "timecop"
-  gem "webmock", require: false
+  gem 'cucumber-rails', require: false
+  gem 'database_cleaner'
+  gem 'factory_bot_rails'
+  gem 'poltergeist'
+  gem 'cuprite'
+  gem 'capybara'
+  gem 'selenium-webdriver'
+  gem 'webdrivers'
+  gem 'launchy' # Primarily for save_and_open_page support in Capybara
+  gem 'rails-controller-testing'
+  gem 'shoulda-matchers'
+  gem 'timecop'
+  gem 'webmock', require: false
 end
 
 group :development, :test do
