@@ -2,7 +2,7 @@ FROM ruby:2.6
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
-    nodejs \
+    nodejs google-chrome-stable \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
