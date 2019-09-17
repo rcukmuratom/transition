@@ -28,6 +28,9 @@ gem 'puma', '~> 4.1'
 gem 'rollbar', '~> 2.22'
 gem 'apache_log-parser'
 
+gem 'ruby-ip'
+gem 'jeweler'
+
 # Custom authentication...
 gem 'omniauth', '1.9.0'
 gem 'omniauth-zendesk-oauth2', '0.1'

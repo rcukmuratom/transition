@@ -2,6 +2,7 @@ require 'pathname'
 require 'transition/import/console_job_wrapper'
 require 'transition/import/postgresql_settings'
 require 'transition/import/hits/ignore'
+require 'iis_access_log_parser'
 require 'apache_log/parser'
 require 'csv'
 
@@ -147,6 +148,25 @@ module Transition
         self.from_file!(LOAD_CSV_DATA, new_csv_filename)
       end
 
+      def self.from_iis_w3c!(filename)
+        # take file from s3 (let's assume it's local for the moment)
+
+        # Parse the CLF file into a familiar data structure
+        parsed_log_lines = self.parse_iis_w3c_log_file(filename: filename)
+
+        # Create a temporary CSV file from the parsed CLF log lines
+        new_csv_filename = 'data/temp_clf_conversion.csv'
+        ::CSV.open(new_csv_filename, 'wb', force_quotes: true) do |csv| # this should probably live in /data
+          csv << %w[date count status host url]
+          parsed_log_lines.each do |parsed_log_line|
+            csv << parsed_log_line
+          end
+        end
+
+        # Send to existing ingest process
+        self.from_file!(LOAD_CSV_DATA, new_csv_filename)
+      end
+
       def self.from_mask!(filemask)
         done = 0
         unchanged = 0
@@ -167,21 +187,20 @@ module Transition
 
       private
 
-      def self.parse_combined_log_format_file(filename:)
+      def self.parse_iis_w3c_log_file(filename:)
         absolute_filename = File.expand_path(filename, Rails.root)
 
-        parser = ApacheLog::Parser.new('combined')
         parsed_log_lines = []
-
         File.open(absolute_filename, 'r') do |file|
           file.each_line do |combined_log_line|
-            combined_log = parser.parse(combined_log_line)
+            log = IISAccessLogParser::Entry.from_string(combined_log_line)
+
             parsed_log_lines << [
-              combined_log[:datetime].to_date.to_s,
+              log.date.to_date.to_s,
               nil, # Set this position in the array for updating the count later
-              combined_log[:status],
-              combined_log[:referer],
-              combined_log.dig(:request, :path)
+              log.status,
+              log.host,
+              log.url
             ]
           end
         end
@@ -189,7 +208,6 @@ module Transition
         grouped_log_lines = parsed_log_lines.inject(Hash.new(0)) { |h, e| h[e] += 1; h }
         counted_log_lines = grouped_log_lines.map do |log, counter|
           log[1] = counter.to_s
-          log[3] = URI(log[3]).host
           log
         end
 
