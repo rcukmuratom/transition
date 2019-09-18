@@ -185,8 +185,6 @@ module Transition
         done
       end
 
-      private
-
       def self.parse_iis_w3c_log_file(filename:)
         absolute_filename = File.expand_path(filename, Rails.root)
 
