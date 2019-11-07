@@ -523,7 +523,7 @@ DEPENDENCIES
   plek
   poltergeist
   pry
-  puma (~> 4.2)
+  puma (~> 4.3)
   rails (= 5.2.3)
   rails-controller-testing
   rails_warden (= 0.6.0)

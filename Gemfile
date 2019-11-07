@@ -18,7 +18,7 @@ gem "optic14n" # Ideally version should be synced with bouncer
 gem "paper_trail", "10.3.1"
 gem "pg"
 gem "plek"
-gem 'puma', '~> 4.2'
+gem 'puma', '~> 4.3'
 gem "rails", "5.2.3"
 gem 'rails_warden', '0.6.0'
 gem 'redis-namespace'
