@@ -428,11 +428,11 @@ GEM
       faraday (>= 0.7.6, < 1.0)
     shoulda-matchers (4.1.2)
       activesupport (>= 4.2.0)
-    sidekiq (5.2.7)
-      connection_pool (~> 2.2, >= 2.2.2)
-      rack (>= 1.5.0)
-      rack-protection (>= 1.5.0)
-      redis (>= 3.3.5, < 5)
+    sidekiq (6.0.5)
+      connection_pool (>= 2.2.2)
+      rack (~> 2.0)
+      rack-protection (>= 2.0.0)
+      redis (>= 4.1.0)
     sidekiq-cron (1.1.0)
       fugit (~> 1.1)
       sidekiq (>= 4.2.1)
@@ -538,7 +538,7 @@ DEPENDENCIES
   select2-rails (= 3.5.7)
   selenium-webdriver
   shoulda-matchers
-  sidekiq (~> 5.2)
+  sidekiq (~> 6.0)
   sidekiq-cron (~> 1.1)
   sprockets (~> 3)
   timecop
