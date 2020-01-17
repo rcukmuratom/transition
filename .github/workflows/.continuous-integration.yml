@@ -7,9 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - run: echo "::set-output name=RUBY_VERSION::$(cat .ruby-version)"
+      id: rbenv
     - uses: actions/setup-ruby@v1
       with:
-        ruby-version: '2.6.3'
+        ruby-version: "${{ steps.rbenv.outputs.RUBY_VERSION }}"
     - name: Set up Docker
       run: docker network create test
     - name: Set up Postgres
