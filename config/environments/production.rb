@@ -60,7 +60,7 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.action_controller.asset_host = 'http://assets.example.com'
   # Use a real queuing backend for Active Job (and separate queues per environment)
-  # config.active_job.queue_adapter     = :resque
+  config.active_job.queue_adapter = :sidekiq
   # config.active_job.queue_name_prefix = "transition_#{Rails.env}"
   config.action_mailer.perform_caching = false
 
@@ -82,8 +82,8 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.action_mailer.default_url_options = {
-    :host => Addressable::URI.parse(Plek.new.external_url_for('transition')).host,
-    :protocol => 'https'
+    host: Addressable::URI.parse(Plek.new.external_url_for('transition')).host,
+    protocol: 'https'
   }
   config.action_mailer.delivery_method = :ses
 
