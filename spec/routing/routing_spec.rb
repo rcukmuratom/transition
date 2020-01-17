@@ -6,10 +6,4 @@ describe 'Routing', type: :routing do
       expect(get: '/').to route_to('authentication#index')
     end
   end
-
-  describe 'login' do
-    it "should route '/login', :to => 'authentication#new'" do
-      expect(get: '/login').to route_to('authentication#new')
-    end
-  end
 end
