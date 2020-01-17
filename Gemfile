@@ -8,7 +8,7 @@ gem "aws-sdk-s3", "~> 1.60"
 gem 'bootstrap-sass', '3.4.1'
 gem "gds-api-adapters", "~> 63.4"
 gem "google-api-client"
-gem "govuk_admin_template"
+gem "govuk_admin_template", "6.7.0", :path => "vendor/gems/govuk_admin_template-6.7.0"
 gem "govuk_app_config", "~> 2.0"
 gem "gretel"
 gem "htmlentities"
