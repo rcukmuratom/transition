@@ -531,7 +531,7 @@ DEPENDENCIES
   rails-controller-testing
   rails_warden (= 0.6.0)
   redis-namespace
-  rollbar (~> 2.22)
+  rollbar (~> 2.23)
   rspec-collection_matchers
   rspec-rails
   rspec-sidekiq
