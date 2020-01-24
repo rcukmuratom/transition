@@ -76,7 +76,7 @@
 
               <% if GovukAdminTemplate::Config.show_signout %>
                 <div class="navbar-text pull-right">
-                  <%= link_to current_user.name, Plek.new.external_url_for('signon') %>
+                  <%= current_user.email %>
                   &bull; <%= link_to 'Sign out', '/auth/gds/sign_out' %>
                 </div>
               <% end %>
