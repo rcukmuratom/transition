@@ -7,8 +7,8 @@
       <%= @organisation.title %>
     </h1>
   </div>
-  <p><%= link_to 'Edit', edit_organisation_path %> this orgnaisation.</p>
-  <p><%= link_to 'Create a site', new_site_path(organisation: @organisation.whitehall_slug) %> for this orgnaisation.</p>
+  <p><%= link_to 'Edit', edit_organisation_path %> this organisation.</p>
+  <p><%= link_to 'Create a site', new_site_path(organisation: @organisation.whitehall_slug) %> for this organisation.</p>
   <%= render 'in_conjunction_with' %>
 </header>
 
