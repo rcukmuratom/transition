@@ -37,6 +37,7 @@ ENV RACK_ENV=${RAILS_ENV:-production}
 
 COPY Gemfile $INSTALL_PATH/Gemfile
 COPY Gemfile.lock $INSTALL_PATH/Gemfile.lock
+COPY vendor $INSTALL_PATH/vendor
 
 RUN gem update --system --quiet
 RUN gem install bundler

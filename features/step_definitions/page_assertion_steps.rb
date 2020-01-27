@@ -80,7 +80,7 @@ end
 Then(/^I should see our custom 404 page$/) do
   steps %{
     Then I should see "Page could not be found"
-    And I should see a link to "GOV.UK Transition"
+    And I should see a link to "dxw Transition Tool"
   }
 end
 
@@ -88,7 +88,7 @@ Then(/^I should see our custom 500 page$/) do
   page.status_code.should eql(500)
   steps %{
     Then I should see "sorry, something went wrong"
-    And I should see a link to "GOV.UK Transition"
+    And I should see a link to "dxw Transition Tool"
   }
 end
 

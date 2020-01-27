@@ -1,0 +1,12 @@
+<%
+  placeholder ||= "Filter table"
+  colspan ||= 100
+  filter_id ||= SecureRandom.uuid
+%>
+<tr class="if-no-js-hide table-header-secondary">
+  <td colspan="<%= colspan %>">
+  <%=
+    render partial: 'govuk_admin_template/table_filter_form', locals: { placeholder: placeholder, filter_id: filter_id }
+  %>
+  </td>
+</tr>
