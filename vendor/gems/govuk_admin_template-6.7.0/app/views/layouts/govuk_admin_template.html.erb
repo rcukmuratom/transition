@@ -74,7 +74,7 @@
                 </ul>
               <% end %>
 
-              <% if GovukAdminTemplate::Config.show_signout %>
+              <% if GovukAdminTemplate::Config.show_signout && current_user.authenticated? %>
                 <div class="navbar-text pull-right">
                   <%= current_user.email %>
                   &bull; <%= link_to 'Sign out', '/auth/gds/sign_out' %>
