@@ -21,6 +21,16 @@ describe OrganisationsController do
       get :show, params: { id: organisation.whitehall_slug }
       expect(assigns(:organisation)).to eq(organisation)
     end
+
+    context 'when an organisation has a site without hosts' do
+      render_views
+      let(:organisation) { create :organisation, sites: create_list(:site_without_host, 1) }
+
+      it 'renders a sensible placeholder name for the site' do
+        get :show, params: { id: organisation.whitehall_slug }
+        expect(response.body).to include("#{organisation.sites.first.abbr} (no hosts configured)")
+      end
+    end
   end
 
   describe '#new' do

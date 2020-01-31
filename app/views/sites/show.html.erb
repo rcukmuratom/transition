@@ -1,9 +1,9 @@
-<% content_for(:page_title, @site.default_host.hostname) %>
+<% content_for(:page_title, site_display_name(@site)) %>
 
 <% breadcrumb :site, @site %>
 
 <div class="page-title-with-border">
-  <h1><%= @site.default_host.hostname %></h1>
+  <h1><%= site_display_name(@site) %></h1>
 </div>
 
 <div class="row">

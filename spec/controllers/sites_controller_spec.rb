@@ -36,6 +36,16 @@ describe SitesController do
         get :show, params: { id: site.abbr }
         expect(assigns(:site)).to eq(site)
       end
+
+      context 'when the site has no hosts' do
+        render_views
+
+        it 'renders a sensible placeholder name for the site' do
+          site = create :site_without_host
+          get :show, params: { id: site.abbr }
+          expect(response.body).to include("#{site.abbr} (no hosts configured)")
+        end
+      end
     end
 
     describe '#new' do
