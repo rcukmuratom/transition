@@ -116,7 +116,8 @@ module Transition
             load_data_query,
             import_record,
             content_hash,
-            File.open(absolute_filename, "r").read,
+            # Read file, remove invalid unicode and null characters as postgres doesn't like them
+            File.open(absolute_filename, "r").read.scrub.gsub("\u0000",""),
           )
         end
       end
