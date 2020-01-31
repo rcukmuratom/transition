@@ -2,7 +2,7 @@ class OrganisationsController < ApplicationController
   before_action :set_organisation, only: %i[show update edit]
 
   def index
-    @organisations = Organisation.with_sites.order(:title)
+    @organisations = Organisation.order(:title)
     @site_count = Site.count
   end
 
