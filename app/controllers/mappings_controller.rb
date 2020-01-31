@@ -110,7 +110,7 @@ class MappingsController < ApplicationController
     unless site
       render_error(404,
                    header: 'Unknown site',
-                   body:  "#{url.host} isn't configured in Transition yet. To add this site to Transition, please contact your Proposition Manager.")
+                   body:  "#{url.host} isn't configured in Transition yet.")
       return
     end
 
