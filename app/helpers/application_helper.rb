@@ -27,4 +27,8 @@ module ApplicationHelper
       org.title
     end
   end
+
+  def site_display_name(site)
+    site.default_host&.hostname || "#{site.abbr} (no hosts configured)"
+  end
 end

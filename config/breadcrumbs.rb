@@ -8,7 +8,7 @@ crumb :organisation do |organisation|
 end
 
 crumb :site do |site|
-  link site.default_host.hostname, site_path(site)
+  link site_display_name(site), site_path(site)
   parent :organisation, site.organisation
 end
 
