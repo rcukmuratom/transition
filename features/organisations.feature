@@ -19,11 +19,11 @@ Feature: List organisations
     When I visit the home page
     Then I should see "@example.com"
     And I should see the header "Organisations"
-    And I should see an organisations table with 3 rows
+    And I should see an organisations table with 4 rows
     And I should see a link to the organisation bis
     And I should see a link to the organisation fco
     And I should see a link to the organisation go-science
-    But I should not see a link to the organisation ukti
+    And I should see a link to the organisation ukti
 
   @javascript
   Scenario: See the "jump to a site or mapping" link with Javascript enabled
