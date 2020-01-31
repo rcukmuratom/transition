@@ -8,7 +8,9 @@ FactoryBot.define do
     content_id { SecureRandom.uuid }
 
     trait :with_site do
-      after(:create) { |o| o.sites = FactoryBot.create_list(:site, 1) }
+      after(:create) do |site, _|
+        create_list(:site, 1, organisation: site)
+      end
     end
   end
 end
