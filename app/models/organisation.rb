@@ -24,26 +24,6 @@ class Organisation < ApplicationRecord
   validates_presence_of :title
   validates_presence_of :content_id
 
-  # We have two ways of joining a site to an org:
-  # 1. By the site's FK relationship to organisations
-  # 2. Through the many-to-many organisations_sites
-  #
-  # UNION these two ways in an INNER JOIN to pretend that the FK relationship
-  # is in fact a row in organisations_sites.
-  scope :with_sites, -> {
-    select("organisations.*, COUNT(*) as site_count").
-    joins('
-      INNER JOIN (
-        SELECT organisation_id, site_id FROM organisations_sites
-        UNION
-        SELECT s.organisation_id, s.id FROM sites s
-      ) AS organisations_sites ON organisations_sites.organisation_id = organisations.id
-    ').
-    joins("INNER JOIN sites ON sites.id = organisations_sites.site_id").
-    group("organisations.id"). # Postgres will accept a group by primary key
-    having("COUNT(*) > 0")
-  }
-
   # Returns organisations ordered by descending error count across
   # all their sites.
   # rubocop:disable Metrics/BlockLength
