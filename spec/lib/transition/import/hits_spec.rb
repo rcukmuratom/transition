@@ -105,6 +105,14 @@ describe Transition::Import::Hits do
       end
     end
 
+    context 'import from a file with invalid characters', testing_before_all: true do
+      it 'should filter out bad utf-8 properly' do
+        expect do
+          Transition::Import::Hits.from_tsv!('spec/fixtures/hits/invalid_utf8.tsv')
+        end.not_to(raise_error)
+      end
+    end
+
     context 'import from a file with cruft paths', testing_before_all: true do
       before do
         Transition::Import::Hits.from_tsv!('spec/fixtures/hits/cruft_paths.tsv')
