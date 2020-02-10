@@ -18,15 +18,9 @@ class AuthenticationController < ApplicationController
   end
 
   private def sign_in(uid, info)
-    check_email!(info['email'])
     user = User.find_or_create_by(uid: uid)
     user.update!(name: info['name'], email: info['email'], permissions: ['admin', 'GDS Editor'], organisation_content_id: nil)
     warden.set_user user
   end
 
-  private def check_email!(email)
-    unless email.include? "dxw.com"
-      raise "Invalid Email Domain. Forbidden"
-    end
-  end
 end
