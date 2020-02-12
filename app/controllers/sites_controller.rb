@@ -39,7 +39,9 @@ class SitesController < ApplicationController
 
     host_list = hosts.split(',')
     host_list.each do |host|
-      Host.find_or_create_by(hostname: host.strip, cname: host, site: @site)
+      Host.find_or_create_by(hostname: host.strip, site: @site) do |h|
+        h.cname = host.strip
+      end
     end
   end
 
