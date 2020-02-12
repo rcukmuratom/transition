@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe IngestW3cLogWorker, type: :worker do
   let(:s3) { Aws::S3::Client.new(stub_responses: true) }
