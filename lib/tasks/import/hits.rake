@@ -40,6 +40,6 @@ namespace :import do
   desc 'Import hits from S3 files in a W3C log format'
   task :from_w3c_files, [:bucket] => :environment do |_, args|
     bucket = args[:bucket]
-    IngestW3cLogs.perform_async(bucket)
+    IngestW3cLogWorker.new.perform(bucket)
   end
 end
