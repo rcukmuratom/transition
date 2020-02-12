@@ -20,6 +20,7 @@ class SitesController < ApplicationController
 
   def update
     if @site.update(site_params)
+      create_host
       redirect_to site_path(@site), flash: { success: 'Site updated successfully' }
     else
       render :edit, flash: { alert: "We couldn't save your change" }
@@ -38,7 +39,7 @@ class SitesController < ApplicationController
 
     host_list = hosts.split(',')
     host_list.each do |host|
-      Host.create(hostname: host, cname: host, site: @site).save
+      Host.find_or_create_by(hostname: host.strip, cname: host, site: @site)
     end
   end
 
