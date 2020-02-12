@@ -9,12 +9,13 @@ describe IngestW3cLogWorker, type: :worker do
 
   describe 'perform' do
     let(:bucket) {"bucket-name"}
-    let(:key) {"results.csv"}
-    let(:file) {"iis_w3c_example.log"}
+    let(:key) {"path/hits.log"}
+    let(:fixture) {"iis_w3c_example.log"}
+    let(:hash) {"abc123456def"}
 
     before(:each) do
-      s3.stub_responses(:list_objects, contents: [{ key: key, etag: file }])
-      s3.stub_responses(:get_object, body: File.open("spec/fixtures/hits/#{file}"))
+      s3.stub_responses(:list_objects, contents: [{ key: key, etag: hash }])
+      s3.stub_responses(:get_object, body: File.open("spec/fixtures/hits/#{fixture}"))
     end
 
     it 'fetches files from S3' do
@@ -43,9 +44,14 @@ describe IngestW3cLogWorker, type: :worker do
 
     context 'when that file has already been ingested' do
       it 'does not ingest those logs again' do
-        ImportedHitsFile.where(filename: file)
-        subject.perform(bucket)
-        expect(ImportedHitsFile.count).to eq(1)
+        # Ingest logs
+        expect {
+          subject.perform(bucket)
+        }.to change { ImportedHitsFile.count }
+        # Ingest logs once again, total shouldn't change
+        expect {
+          subject.perform(bucket)
+        }.not_to change { ImportedHitsFile.count }
       end
     end
   end
