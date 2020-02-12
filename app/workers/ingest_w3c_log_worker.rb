@@ -17,6 +17,9 @@ class IngestW3cLogWorker
         if import_record.content_hash == object.etag
           puts "Already ingested #{object.key} - skipping" unless Rails.env.test?
           next
+        else
+          import_record.content_hash = object.etag
+          import_record.save!
         end
 
         begin
