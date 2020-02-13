@@ -79,7 +79,7 @@ describe SitesController do
         }
 
         expect do
-          post :create, params: { site: params, host_list: 'localhost' }
+          post :create, params: { site: params, host_names: 'example.com, example.net' }
         end.to change { Site.all.count }.by(1)
 
         site = Site.find_by(abbr: 'MOJ')
@@ -92,6 +92,14 @@ describe SitesController do
           .to eq(params[:global_redirect_append_path])
         expect(site.homepage_title).to eq(params[:homepage_title])
         expect(site.organisation).to eq(organisation)
+        # Check hosts
+        expect(site.hosts.length).to eq(2)
+        host = site.hosts.where(hostname: "example.com").first
+        expect(host).to be_present
+        expect(host.cname).to eq("example.com")
+        host = site.hosts.where(hostname: "example.net").first
+        expect(host).to be_present
+        expect(host.cname).to eq("example.net")
       end
     end
 
@@ -99,6 +107,9 @@ describe SitesController do
       let(:site) { create :site }
 
       it 'updates a site' do
+        # To start with, we should have one host created by the factory
+        expect(site.hosts.length).to eq(1)
+
         params = {
           launch_date: Time.zone.today + 10.days,
           abbr: 'MOJ',
@@ -108,8 +119,10 @@ describe SitesController do
           global_redirect_append_path: true,
           homepage_title: 'Deparment of M'
         }
+        # Include the default host as well as a new one
+        host_names = "#{site.hosts.first.hostname}, example.org"
 
-        patch :update, params: { id: site.abbr, site: params }
+        patch :update, params: { id: site.abbr, site: params, host_names: host_names }
         site.reload
         expect(site.launch_date).to eq(params[:launch_date])
         expect(site.abbr).to eq(params[:abbr])
@@ -119,6 +132,11 @@ describe SitesController do
         expect(site.global_redirect_append_path)
           .to eq(params[:global_redirect_append_path])
         expect(site.homepage_title).to eq(params[:homepage_title])
+        # Check new host was added
+        expect(site.hosts.length).to eq(2)
+        host = site.hosts.where(hostname: "example.org").first
+        expect(host).to be_present
+        expect(host.cname).to eq("example.org")
       end
     end
   end
