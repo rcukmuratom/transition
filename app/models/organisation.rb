@@ -1,4 +1,4 @@
-class Organisation < ActiveRecord::Base
+class Organisation < ApplicationRecord
   has_many :child_organisational_relationships,
            foreign_key: :parent_organisation_id,
            class_name: "OrganisationalRelationship"
@@ -12,8 +12,8 @@ class Organisation < ActiveRecord::Base
            through: :parent_organisational_relationships
 
   has_and_belongs_to_many :extra_sites,
-                          join_table: 'organisations_sites',
-                          class_name: 'Site'
+                          join_table: "organisations_sites",
+                          class_name: "Site"
 
   has_many :sites
   has_many :hosts, through: :sites
@@ -26,9 +26,10 @@ class Organisation < ActiveRecord::Base
 
   # Returns organisations ordered by descending error count across
   # all their sites.
+  # rubocop:disable Metrics/BlockLength
   scope :leaderboard, -> {
     select(
-      <<-POSTGRESQL
+      <<-POSTGRESQL,
         organisations.title,
         organisations.whitehall_slug,
         COUNT(*)                                     AS site_count,
@@ -38,7 +39,7 @@ class Organisation < ActiveRecord::Base
       POSTGRESQL
     ).
     joins(
-      <<-POSTGRESQL
+      <<-POSTGRESQL,
         INNER JOIN sites
                ON sites.organisation_id = organisations.id
         LEFT JOIN (SELECT sites.id AS site_id,
@@ -64,9 +65,10 @@ class Organisation < ActiveRecord::Base
                    GROUP BY site_id) AS error_counts ON error_counts.site_id = sites.id
       POSTGRESQL
     ).
-    group('organisations.id').
-    order('error_count DESC NULLS LAST')
+    group("organisations.id").
+    order("error_count DESC NULLS LAST")
   }
+  # rubocop:enable Metrics/BlockLength
 
   def to_param
     whitehall_slug

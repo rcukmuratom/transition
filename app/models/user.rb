@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   has_many :mappings_batches
   has_many :bulk_add_batches
   has_many :import_batches
@@ -11,11 +11,11 @@ class User < ActiveRecord::Base
   end
 
   def admin?
-    permissions.include?('admin')
+    permissions.include?("admin")
   end
 
   def gds_editor?
-    permissions.include?('GDS Editor')
+    permissions.include?("GDS Editor")
   end
 
   def can_edit_sites

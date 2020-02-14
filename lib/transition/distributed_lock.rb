@@ -1,5 +1,5 @@
-require 'redis'
-require 'redis-lock'
+require "redis"
+require "redis-lock"
 module Transition
   class DistributedLock
     LIFETIME = (5 * 60) # seconds

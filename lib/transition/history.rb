@@ -2,10 +2,10 @@ module Transition
   module History
     class PaperTrailUserNotSetError < RuntimeError
       def to_s
-        'Both PaperTrail.request.controller_info and PaperTrail.request.whodunnit should be '\
+        "Both PaperTrail.request.controller_info and PaperTrail.request.whodunnit should be "\
         "set. controller_info #{PaperTrail.request.controller_info || '(nil)'} should be a hash "\
         "containing user_id, and whodunnit #{PaperTrail.request.whodunnit || '(nil)'} should be "\
-        'the user\'s name.'
+        "the user's name."
       end
     end
 

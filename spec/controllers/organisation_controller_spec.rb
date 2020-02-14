@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe OrganisationsController do
   before do
@@ -31,6 +31,10 @@ describe OrganisationsController do
         expect(response.body).to include("#{organisation.sites.first.abbr} (no hosts configured)")
       end
     end
+  end
+
+  it "orders organisations alphabetically" do
+    expect(assigns(:organisations)).to eq([organisation_a, organisation_z])
   end
 
   describe '#new' do

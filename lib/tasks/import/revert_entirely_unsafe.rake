@@ -1,12 +1,12 @@
 namespace :import do
-  desc 'Deletes a site and all associated data'
+  desc "Deletes a site and all associated data"
   task :revert_entirely_unsafe, [:site_abbr] => :environment do |_, args|
     if args[:site_abbr].nil?
-      puts 'Usage: rake import:revert_entirely_unsafe[site_abbr]'
+      puts "Usage: rake import:revert_entirely_unsafe[site_abbr]"
       abort
     end
 
-    site = Site.find_by_abbr(args[:site_abbr])
+    site = Site.find_by(abbr: args[:site_abbr])
     raise "No site found for #{args[:site_abbr]}" unless site
 
     STDOUT.flush

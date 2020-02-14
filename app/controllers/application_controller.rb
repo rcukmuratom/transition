@@ -1,4 +1,7 @@
 class ApplicationController < ActionController::Base
+  before_action :set_paper_trail_whodunnit
+  before_action :authenticate_user!
+
   before_action :exclude_all_users_except_admins_during_maintenance
   before_action :authenticate
 
@@ -36,7 +39,7 @@ class ApplicationController < ActionController::Base
   def render_error(status, options = {})
     @custom_header = options[:header]
     @custom_body = options[:body]
-    render "errors/error_#{status}", status: status, layout: 'error_page'
+    render "errors/error_#{status}", status: status, layout: "error_page"
   end
 
 private

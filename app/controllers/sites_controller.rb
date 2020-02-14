@@ -50,7 +50,7 @@ class SitesController < ApplicationController
   end
 
   def find_site
-    @site = Site.find_by_abbr!(params[:id])
+    @site = Site.find_by!(abbr: params[:id])
   end
 
   def site_params
@@ -69,7 +69,7 @@ class SitesController < ApplicationController
 
   private def check_user_is_gds_editor
     unless current_user.gds_editor?
-      message = 'Only GDS Editors can access that.'
+      message = "Only GDS Editors can access that."
       redirect_to site_path(@site), alert: message
     end
   end
