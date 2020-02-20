@@ -79,6 +79,10 @@ docker-compose build
 docker-compose up
 ```
 
+If you have problems, try `docker-compose rm` and then `docker-compose up` again. Sometimes
+database setup doesn't happen quite right, and until you remove and rebuild that part, the
+problem will persist.
+
 ## Style guide
 
 Available at /style, the guide documents how transition is using bootstrap, where the app has diverged from default
