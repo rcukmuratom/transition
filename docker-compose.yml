@@ -28,8 +28,9 @@ services:
       DATABASE_URL: postgres://postgres:abc123@db:5432/transition
       REDIS_URL: redis://redis:6379
       SECRET_KEY_BASE: 873834943a6232c50e6e515f99da526d6b3855b765d24de04688ecb26930fc5137b5abba7774785fa38db9bb681d326c37b162ac1c2860c8b95f1c4ffe2822d2
-    env_file:
-      - .env
+      AUTH0_CLIENT_ID: "${AUTH0_CLIENT_ID}"
+      AUTH0_CLIENT_SECRET: "${AUTH0_CLIENT_SECRET}"
+      AUTH0_DOMAIN: "${AUTH0_DOMAIN}"
     ports:
       - "3000:3000"
     depends_on:
@@ -44,9 +45,9 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:abc123@db:5432/transition
       REDIS_URL: redis://redis:6379
-      SECRET_KEY_BASE: 873834943a6232c50e6e515f99da526d6b3855b765d24de04688ecb26930fc5137b5abba7774785fa38db9bb681d326c37b162ac1c2860c8b95f1c4ffe2822d2
-    env_file:
-      - .env
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "${AWS_REGION}"
     depends_on:
       - db
       - redis
