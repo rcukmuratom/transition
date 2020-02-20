@@ -76,10 +76,11 @@ to the docker containers.
 
 ```sh
 docker-compose build
-docker-compose up
+docker-compose start
+docker-compose run transition rake db:setup
 ```
 
-If you have problems, try `docker-compose rm` and then `docker-compose up` again. Sometimes
+If you have problems, try `docker-compose rm` and then `docker-compose start` again. Sometimes
 database setup doesn't happen quite right, and until you remove and rebuild that part, the
 problem will persist.
 
