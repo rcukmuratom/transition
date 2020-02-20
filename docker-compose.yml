@@ -39,6 +39,22 @@ services:
       - db
       - redis
 
+  sidekiq:
+    build: .
+    environment:
+      DATABASE_URL: postgres://postgres:abc123@db:5432/transition
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY_BASE: 873834943a6232c50e6e515f99da526d6b3855b765d24de04688ecb26930fc5137b5abba7774785fa38db9bb681d326c37b162ac1c2860c8b95f1c4ffe2822d2
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    links:
+      - db
+      - redis
+    command: bundle exec sidekiq -C config/sidekiq.yml
+
   bouncer:
     build: ../bouncer
     environment:
