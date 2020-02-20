@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:12.1-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: somethingsecret
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8888:8080
+
+  redis:
+    image: redis:4.0.14
+    restart: always
+    ports:
+      - 6379:6379
+
+  transition:
+    build: .
+    environment:
+      DATABASE_URL: db:5432
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY_BASE: 873834943a6232c50e6e515f99da526d6b3855b765d24de04688ecb26930fc5137b5abba7774785fa38db9bb681d326c37b162ac1c2860c8b95f1c4ffe2822d2
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+    links:
+      - db
+      - redis
+
+  bouncer:
+    build: ../bouncer
+    environment:
+      DATABASE_URL: db:5432
+    ports:
+      - "9292:9292"
+    depends_on:
+      - db
+    links:
+      - db
+      - redis
