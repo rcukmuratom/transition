@@ -57,7 +57,7 @@ services:
     command: bundle exec sidekiq -C config/sidekiq.yml
 
   bouncer:
-    build: ../bouncer
+    image: thedxw/bouncer
     environment:
       DATABASE_URL: postgres://postgres:abc123@db:5432/transition
     ports:

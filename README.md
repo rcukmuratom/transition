@@ -71,10 +71,8 @@ bundle exec sidekiq -C config/sidekiq.yml
 
 ### Running with docker-compose
 
-Alternatively, you can use `docker-compose` to run the application. In this case,
-[Bouncer](https://github.com/dxw/bouncer) should also be checked out in the same
-directory as Transition. The config values set in `.env` will be automatically passed
-to the docker containers.
+Alternatively, you can use `docker-compose` to run the application. The
+config values set in `.env` will be automatically passed to the docker containers.
 
 ```sh
 docker-compose build
