@@ -24,7 +24,7 @@ services:
   transition:
     build: .
     environment:
-      DATABASE_URL: db:5432
+      DATABASE_URL: postgres://db:5432
       REDIS_URL: redis://redis:6379
       SECRET_KEY_BASE: 873834943a6232c50e6e515f99da526d6b3855b765d24de04688ecb26930fc5137b5abba7774785fa38db9bb681d326c37b162ac1c2860c8b95f1c4ffe2822d2
     ports:
@@ -39,7 +39,7 @@ services:
   bouncer:
     build: ../bouncer
     environment:
-      DATABASE_URL: db:5432
+      DATABASE_URL: postgres://db:5432
     ports:
       - "9292:9292"
     depends_on:
