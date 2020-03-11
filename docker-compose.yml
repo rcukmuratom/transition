@@ -32,6 +32,10 @@ services:
       AUTH0_CLIENT_SECRET: "${AUTH0_CLIENT_SECRET}"
       AUTH0_DOMAIN: "${AUTH0_DOMAIN}"
       RAILS_SERVE_STATIC_FILES: "enabled"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "${AWS_REGION}"
+      LOG_BUCKET_NAME: "${LOG_BUCKET_NAME}"
     ports:
       - "3000:3000"
     depends_on:
@@ -49,6 +53,7 @@ services:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
       AWS_REGION: "${AWS_REGION}"
+      LOG_BUCKET_NAME: "${LOG_BUCKET_NAME}"
     depends_on:
       - db
       - redis

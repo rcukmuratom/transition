@@ -7,7 +7,7 @@ class IngestW3cLogWorker
   sidekiq_options retry: false, queue: 'ingest'
 
   def perform(bucket)
-    puts "Ingesting IIS W3C logs from: #{bucket}" unless Rails.env.test?
+    puts "Testing Ingesting IIS W3C logs from: #{bucket}" unless Rails.env.test?
 
     ::Services.s3.list_objects(bucket: bucket).each do |resp|
       resp.contents.each do |object|
