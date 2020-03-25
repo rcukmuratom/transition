@@ -31,3 +31,6 @@
 
 # Ignore application secrets
 .env
+
+# Ignore nginx config
+nginx.conf
