@@ -23,6 +23,38 @@ FactoryBot will seed some dummy data to get started with.
 bundle exec rake db:seed
 ```
 
+## Configure the environment variables
+
+Copy the file `env.example` to `.env` and fill in the environment variables:
+
+First, Auth0 environment variables configure the Auth0 plugin for user login.
+These values come from your [Auth0 tenant](https://manage.auth0.com/dashboard).
+```
+AUTH0_CLIENT_ID=abc123
+AUTH0_CLIENT_SECRET=xyz456
+AUTH0_DOMAIN=example.eu.auth0.com
+```
+
+[Rollbar](https://rollbar.com/) is used for error reporting, though this is not
+used in development, so does not need to be set.
+```
+ROLLBAR_ACCESS_TOKEN=
+```
+
+The app needs a Redis server for queueing:
+```
+REDIS_URL=redis://localhost:6379
+```
+
+Data can be ingested from an S3 bucket. Use the AWS IAM tools to create
+[security credentials](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
+to use here.
+```
+AWS_ACCESS_KEY_ID=access-key-id-goes-here
+AWS_SECRET_ACCESS_KEY=access-key-secret-goes-here
+AWS_REGION=eu-west-2
+```
+
 ## Running the app
 
 The web application itself is run like any other Rails app, for example:
@@ -36,6 +68,21 @@ In development, you can run sidekiq to process background jobs:
 ```sh
 bundle exec sidekiq -C config/sidekiq.yml
 ```
+
+### Running with docker-compose
+
+Alternatively, you can use `docker-compose` to run the application. The
+config values set in `.env` will be automatically passed to the docker containers.
+
+```sh
+docker-compose build
+docker-compose up -d
+docker-compose run transition rake db:setup
+```
+
+If you have problems, try `docker-compose rm` and then `docker-compose up -d` again. Sometimes
+database setup doesn't happen quite right, and until you remove and rebuild that part, the
+problem will persist.
 
 ## Style guide
 
