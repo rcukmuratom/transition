@@ -18,6 +18,12 @@ services:
       LOG_BUCKET_NAME: "${LOG_BUCKET_NAME}"
     ports:
       - "3000:3000"
+    depends_on:
+      - db
+      - redis
+    links:
+      - db
+      - redis
 
   sidekiq:
     build: .
@@ -29,25 +35,46 @@ services:
       AWS_REGION: "${AWS_REGION}"
       LOG_BUCKET_NAME: "${LOG_BUCKET_NAME}"
     command: bundle exec sidekiq -C config/sidekiq.yml
+    depends_on:
+      - db
+      - redis
+    links:
+      - db
+      - redis
 
   bouncer:
-    image: thedxw/bouncer
+    image: ukri/bouncer
     environment:
       DATABASE_URL: postgres://postgres:${POSTGRES_PASS}@${POSTGRES_URL}:5432/transition
     ports:
       - "3049:3049"
 
-  # nginx: 
-  #   image: nginx:stable
-  #   container_name: nginx
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   depends_on:
-  #     - bouncer
-  #     - transition
-  #   links:
-  #     - bouncer
-  #     - transition
+  db:
+    image: postgres:12.2-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: abc123
+      POSTGRES_DB: transition
+
+  redis:
+    image: redis:4.0.14
+    restart: always
+    ports:
+      - 6379:6379
+
+  nginx: 
+    image: nginx:stable
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - bouncer
+      - transition
+    links:
+      - bouncer
+      - transition
